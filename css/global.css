@@ -1,0 +1,72 @@
+:root { 
+    --color-primario: #0F172A; 
+    --color-pagina-de-fondo: #F8FAFC; 
+    --color-superficie: #FFFFFF; 
+    --color-positivo: #10B981; 
+    --color-negativo: #E11D48; 
+    --color-accion: #2563EB; 
+    --color-hover-accion: #1D4ED8; 
+    --color-textual-muteado: #64748B; 
+    --color-borde: #E2E8F0; 
+    font-size: 16px; 
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--color-pagina-de-fondo);
+    display: flex;
+    flex-direction: column;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Cambiamos 100vw por 100% para evitar el scrollbar horizontal */
+header, main, footer {
+    width: 100%;
+}
+
+header, footer {
+    min-height: 7vh;
+    background-color: var(--color-primario);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main {
+    flex: 1; /* Es mejor que height: 86vh para adaptarse al contenido */
+}
+
+/* --- AQUÍ ESTÁ EL CAMBIO PRINCIPAL --- */
+header nav {
+    width: 100%;
+    max-width: 1200px; /* Evita que los enlaces queden excesivamente separados en pantallas muy anchas */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around; /* O puedes usar space-between */
+    align-items: center;
+    padding: 0 1rem;
+}
+
+/* Estilos recomendados para los enlaces del nav */
+header nav a {
+    color: var(--color-textual-muteado);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 0.75rem;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    border-radius: 0.375rem;
+}
+
+header nav a:hover {
+    color: var(--color-superficie);
+    background-color: rgba(255, 255, 255, 0.1);
+}
