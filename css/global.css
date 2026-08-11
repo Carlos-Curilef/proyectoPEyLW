@@ -1,12 +1,12 @@
 :root { 
     --color-primario: #0F172A; 
-    --color-pagina-de-fondo: #F8FAFC; 
+    --color-fondo: #F8FAFC; 
     --color-superficie: #FFFFFF; 
     --color-positivo: #10B981; 
-    --color-negativo: #E11D48; 
-    --color-accion: #2563EB; 
+    --color-negativo: #EF4444; 
+    --color-accion: #3B82F6; 
     --color-hover-accion: #1D4ED8; 
-    --color-textual-muteado: #64748B; 
+    --color-texto-mute: #64748B; 
     --color-borde: #E2E8F0; 
     font-size: 16px; 
 }
@@ -20,53 +20,85 @@
 body {
     width: 100%;
     min-height: 100vh;
-    background-color: var(--color-pagina-de-fondo);
+    background-color: var(--color-fondo);
+    color: var(--color-primario);
     display: flex;
     flex-direction: column;
     font-family: system-ui, -apple-system, sans-serif;
 }
 
-/* Cambiamos 100vw por 100% para evitar el scrollbar horizontal */
-header, main, footer {
+/* Header & Navegación */
+header {
     width: 100%;
-}
-
-header, footer {
-    min-height: 7vh;
     background-color: var(--color-primario);
+    padding: 1rem 2rem;
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 
-main {
-    flex: 1; /* Es mejor que height: 86vh para adaptarse al contenido */
-}
-
-/* --- AQUÍ ESTÁ EL CAMBIO PRINCIPAL --- */
 header nav {
     width: 100%;
-    max-width: 1200px; /* Evita que los enlaces queden excesivamente separados en pantallas muy anchas */
+    max-width: 1100px;
     display: flex;
-    flex-direction: row;
-    justify-content: space-around; /* O puedes usar space-between */
+    justify-content: space-between;
     align-items: center;
-    padding: 0 1rem;
 }
 
-/* Estilos recomendados para los enlaces del nav */
 header nav a {
-    color: var(--color-textual-muteado);
+    color: var(--color-texto-mute);
     text-decoration: none;
-    font-size: 0.875rem;
-    font-weight: bold;
-    letter-spacing: 0.05em;
-    padding: 0.5rem 0.75rem;
-    transition: color 0.2s ease, background-color 0.2s ease;
-    border-radius: 0.375rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    transition: 0.2s ease;
 }
 
-header nav a:hover {
+header nav a:hover, header nav a.active {
     color: var(--color-superficie);
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Contenedor Principal (Flexbox estándar para evitar grillas rígidas) */
+main {
+    flex: 1;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Componentes Reutilizables (Tarjetas, Botones) */
+.tarjeta {
+    background-color: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primario { background-color: var(--color-accion); color: white; }
+.btn-positivo { background-color: var(--color-positivo); color: white; }
+.btn-negativo { background-color: var(--color-negativo); color: white; }
+
+/* Footer */
+footer {
+    background-color: var(--color-primario);
+    color: var(--color-texto-mute);
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.85rem;
 }

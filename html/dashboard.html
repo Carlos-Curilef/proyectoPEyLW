@@ -18,9 +18,45 @@
         </nav>
     </header>
     <main>
+        <div class="titulo tarjeta"></div>
+        <main>
+    <!-- BLOQUE 1: Encabezado -->
+    <section class="tarjeta">
+        <h1>Hola, este es tu resumen financiero</h1>
+        <p>Fecha: <span id="fecha">11/08/2026</span></p>
+    </section>
 
+    <!-- BLOQUE 2: Filas de 3 Tarjetas KPI -->
+    <section class="fila-tarjetas">
+        <div class="tarjeta kpi">
+            <h3>Balance Total</h3>
+            <p class="monto positivo">$1,500.00</p>
+        </div>
+        <div class="tarjeta kpi">
+            <h3>Total Ingresos</h3>
+            <p class="monto positivo">$3,000.00</p>
+        </div>
+        <div class="tarjeta kpi">
+            <h3>Total Gastos</h3>
+            <p class="monto negativo">$1,500.00</p>
+        </div>
+    </section>
+
+    <!-- BLOQUE 3: Barra de progreso -->
+    <section class="tarjeta">
+        <h3>Meta Mensual</h3>
+        <!-- barra aquí -->
+    </section>
+
+    <!-- BLOQUE 4: Accesos Rápidos (Botones lado a lado) -->
+    <section class="fila-botones">
+        <a href="ingresos.html" class="btn btn-positivo">+ Registrar Ingreso</a>
+        <a href="gastos.html" class="btn btn-negativo">- Registrar Gasto</a>
+        <a href="simulador.html" class="btn btn-primario">Proyectar Ahorro</a>
+    </section>
+</main>
     </main>
-    <footer></footer>
+    <footer>Powered By Tybo</footer>
     <script src="/javascript/app.js"></script>
 </body>
 </html>
