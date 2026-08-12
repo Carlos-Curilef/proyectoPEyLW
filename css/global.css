@@ -42,6 +42,8 @@ header nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 header nav a {
@@ -51,15 +53,16 @@ header nav a {
     font-size: 0.9rem;
     padding: 0.5rem 0.8rem;
     border-radius: 6px;
-    transition: 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-header nav a:hover, header nav a.active {
+header nav a:hover, 
+header nav a.active {
     color: var(--color-superficie);
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Contenedor Principal (Flexbox estándar para evitar grillas rígidas) */
+/* Contenedor Principal */
 main {
     flex: 1;
     width: 100%;
@@ -71,7 +74,7 @@ main {
     gap: 1.5rem;
 }
 
-/* Componentes Reutilizables (Tarjetas, Botones) */
+/* Componentes Reutilizables */
 .tarjeta {
     background-color: var(--color-superficie);
     border: 1px solid var(--color-borde);
@@ -80,6 +83,35 @@ main {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+/* Estructura de Filas (KPIs y Botones) */
+.fila-tarjetas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.fila-botones {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Formato para Tarjetas KPI y Montos */
+.kpi h3 {
+    font-size: 0.9rem;
+    color: var(--color-texto-mute);
+    margin-bottom: 0.5rem;
+}
+
+.monto {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.monto.positivo { color: var(--color-positivo); }
+.monto.negativo { color: var(--color-negativo); }
+
+/* Botones */
 .btn {
     padding: 0.6rem 1.2rem;
     border-radius: 6px;
@@ -88,6 +120,11 @@ main {
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
+    transition: opacity 0.2s ease;
+}
+
+.btn:hover {
+    opacity: 0.9;
 }
 
 .btn-primario { background-color: var(--color-accion); color: white; }

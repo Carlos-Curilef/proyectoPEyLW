@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/global.css">
+    <title>Simulador</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="dashboard.html">DASHBOARD</a>
+            <a href="ingresos.html">INGRESOS</a>
+            <a href="gastos.html">GASTOS</a>
+            <a href="simulador.html">SIMULADOR</a>
+            <a href="historial.html">HISTORIAL</a>
+            <a href="reportes.html">REPORTES</a>
+        </nav>
+    </header>
+
+    <main>
+        
+
+        <!-- BLOQUE 1: Encabezado -->
+        <section class="tarjeta">
+            <h1>Simulador de Proyección Financiera</h1>
+            <p>Fecha: <span id="fecha">11/08/2026</span></p>
+        </section>
+
+        <!-- BLOQUE 2: Filas de 3 Tarjetas KPI -->
+        <section class="fila-tarjetas">
+            <div class="tarjeta kpi">
+                <h3>Balance Total</h3>
+                <p class="monto positivo">$1,500.00</p>
+            </div>
+            <div class="tarjeta kpi">
+                <h3>Total Ingresos</h3>
+                <p class="monto positivo">$3,000.00</p>
+            </div>
+            <div class="tarjeta kpi">
+                <h3>Total Gastos</h3>
+                <p class="monto negativo">$1,500.00</p>
+            </div>
+        </section>
+
+        <!-- BLOQUE 3: Barra de progreso -->
+        <section class="tarjeta">
+            <h3>Meta Mensual</h3>
+            <!-- barra aquí -->
+        </section>
+
+        <!-- BLOQUE 4: Accesos Rápidos (Botones lado a lado) -->
+        <section class="fila-botones">
+            <a href="ingresos.html" class="btn btn-positivo">+ Registrar Ingreso</a>
+            <a href="gastos.html" class="btn btn-negativo">- Registrar Gasto</a>
+            <a href="simulador.html" class="btn btn-primario">Proyectar Ahorro</a>
+        </section>
+    </main>
+
+    <footer>Powered By Tybo</footer>
+    <script src="/javascript/app.js"></script>
+</body>
+</html>
