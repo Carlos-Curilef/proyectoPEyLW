@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/global.css">
-    <title>Reportes</title>
+    <title>Reportes - Finanzas</title>
 </head>
 <body>
     <header>
@@ -14,46 +14,78 @@
             <a href="gastos.html">GASTOS</a>
             <a href="simulador.html">SIMULADOR</a>
             <a href="historial.html">HISTORIAL</a>
-            <a href="reportes.html">REPORTES</a>
+            <a href="reportes.html" class="active">REPORTES</a>
         </nav>
     </header>
 
     <main>
-        
-
-        <!-- BLOQUE 1: Encabezado -->
-        <section class="tarjeta">
-            <h1>Tarjeta de Diagnóstico Inteligente</h1>
-            <p>Fecha: <span id="fecha">11/08/2026</span></p>
+        <!-- BLOQUE 1: Encabezado con Selector de Período -->
+        <section>
+            <header>
+                <div>
+                    <h1>Reportes y Análisis</h1>
+                    <p>Resumen métrico de tus patrones de consumo y ahorro.</p>
+                </div>
+                <label>
+                    <select id="reporte-periodo">
+                        <option value="este-mes">Este Mes</option>
+                        <option value="mes-anterior">Mes Anterior</option>
+                        <option value="ultimo-trimestre">Último Trimestre</option>
+                        <option value="anio-actual">Año Actual</option>
+                    </select>
+                </label>
+            </header>
         </section>
 
-        <!-- BLOQUE 2: Filas de 3 Tarjetas KPI -->
-        <section class="fila-tarjetas">
-            <div class="tarjeta kpi">
-                <h3>Balance Total</h3>
-                <p class="monto positivo">$1,500.00</p>
-            </div>
-            <div class="tarjeta kpi">
-                <h3>Total Ingresos</h3>
-                <p class="monto positivo">$3,000.00</p>
-            </div>
-            <div class="tarjeta kpi">
-                <h3>Total Gastos</h3>
-                <p class="monto negativo">$1,500.00</p>
-            </div>
+        <!-- BLOQUE 2: Métricas de Desempeño (KPIs) -->
+        <section class="kpis">
+            <article>
+                <h3>Promedio de Gasto Diario</h3>
+                <p class="monto negativo" id="reporte-promedio-diario">$50.00</p>
+            </article>
+            <article>
+                <h3>Tasa de Ahorro</h3>
+                <p class="monto positivo" id="reporte-tasa-ahorro">50.0%</p>
+            </article>
+            <article>
+                <h3>Categoría Mayor Gasto</h3>
+                <p class="monto" id="reporte-categoria-top">Alimentación</p>
+            </article>
         </section>
 
-        <!-- BLOQUE 3: Barra de progreso -->
-        <section class="tarjeta">
-            <h3>Meta Mensual</h3>
-            <!-- barra aquí -->
-        </section>
+        <!-- BLOQUE 3: Desglose por Categorías -->
+        <section>
+            <h3>Distribución de Gastos por Categoría</h3>
+            <p>Porcentaje correspondiente al período seleccionado.</p>
 
-        <!-- BLOQUE 4: Accesos Rápidos (Botones lado a lado) -->
-        <section class="fila-botones">
-            <a href="ingresos.html" class="btn btn-positivo">+ Registrar Ingreso</a>
-            <a href="gastos.html" class="btn btn-negativo">- Registrar Gasto</a>
-            <a href="simulador.html" class="btn btn-primario">Proyectar Ahorro</a>
+            <ul class="desglose" id="lista-desglose">
+                <!-- Ítem 1 -->
+                <li>
+                    <div>
+                        <span>Alimentación / Supermercado</span>
+                        <span>$900.00 (60%)</span>
+                    </div>
+                    <progress value="60" max="100"></progress>
+                </li>
+
+                <!-- Ítem 2 -->
+                <li>
+                    <div>
+                        <span>Vivienda / Servicios</span>
+                        <span>$450.00 (30%)</span>
+                    </div>
+                    <progress value="30" max="100"></progress>
+                </li>
+
+                <!-- Ítem 3 -->
+                <li>
+                    <div>
+                        <span>Entretenimiento / Ocio</span>
+                        <span>$150.00 (10%)</span>
+                    </div>
+                    <progress value="10" max="100"></progress>
+                </li>
+            </ul>
         </section>
     </main>
 

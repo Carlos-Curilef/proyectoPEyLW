@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/global.css">
-    <title>Dashboard</title>
+    <title>Dashboard - Finanzas</title>
 </head>
 <body>
     <header>
         <nav>
-            <a href="dashboard.html">DASHBOARD</a>
+            <a href="dashboard.html" class="active">DASHBOARD</a>
             <a href="ingresos.html">INGRESOS</a>
             <a href="gastos.html">GASTOS</a>
             <a href="simulador.html">SIMULADOR</a>
@@ -19,37 +19,36 @@
     </header>
 
     <main>
-
         <!-- BLOQUE 1: Encabezado -->
-        <section class="tarjeta">
+        <section>
             <h1>Hola, este es tu resumen financiero</h1>
-            <p>Fecha: <span id="fecha">11/08/2026</span></p>
+            <p>Fecha: <time id="fecha">11/08/2026</time></p>
         </section>
 
-        <!-- BLOQUE 2: Filas de 3 Tarjetas KPI -->
-        <section class="fila-tarjetas">
-            <div class="tarjeta kpi">
+        <!-- BLOQUE 2: Tarjetas KPI -->
+        <section class="kpis">
+            <article>
                 <h3>Balance Total</h3>
-                <p class="monto positivo">$1,500.00</p>
-            </div>
-            <div class="tarjeta kpi">
+                <p class="monto positivo" id="balance-total">$1,500.00</p>
+            </article>
+            <article>
                 <h3>Total Ingresos</h3>
-                <p class="monto positivo">$3,000.00</p>
-            </div>
-            <div class="tarjeta kpi">
+                <p class="monto positivo" id="total-ingresos">$3,000.00</p>
+            </article>
+            <article>
                 <h3>Total Gastos</h3>
-                <p class="monto negativo">$1,500.00</p>
-            </div>
+                <p class="monto negativo" id="total-gastos">$1,500.00</p>
+            </article>
         </section>
 
-        <!-- BLOQUE 3: Barra de progreso -->
-        <section class="tarjeta">
-            <h3>Meta Mensual</h3>
-            <!-- barra aquí -->
+        <!-- BLOQUE 3: Meta Mensual (Usa la barra nativa <progress>) -->
+        <section>
+            <h3>Meta Mensual (<span id="meta-porcentaje">75%</span>)</h3>
+            <progress id="meta-barra" value="75" max="100"></progress>
         </section>
 
-        <!-- BLOQUE 4: Accesos Rápidos (Botones lado a lado) -->
-        <section class="fila-botones">
+        <!-- BLOQUE 4: Accesos Rápidos -->
+        <section class="acciones">
             <a href="ingresos.html" class="btn btn-positivo">+ Registrar Ingreso</a>
             <a href="gastos.html" class="btn btn-negativo">- Registrar Gasto</a>
             <a href="simulador.html" class="btn btn-primario">Proyectar Ahorro</a>

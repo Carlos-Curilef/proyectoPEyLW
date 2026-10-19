@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/global.css">
-    <title>Simulador</title>
+    <title>Simulador Financiero - Finanzas</title>
 </head>
 <body>
     <header>
@@ -12,48 +12,63 @@
             <a href="dashboard.html">DASHBOARD</a>
             <a href="ingresos.html">INGRESOS</a>
             <a href="gastos.html">GASTOS</a>
-            <a href="simulador.html">SIMULADOR</a>
+            <a href="simulador.html" class="active">SIMULADOR</a>
             <a href="historial.html">HISTORIAL</a>
             <a href="reportes.html">REPORTES</a>
         </nav>
     </header>
 
     <main>
-        
-
         <!-- BLOQUE 1: Encabezado -->
-        <section class="tarjeta">
-            <h1>Simulador de Proyección Financiera</h1>
-            <p>Fecha: <span id="fecha">11/08/2026</span></p>
+        <section>
+            <h1>Simulador de Proyecciones</h1>
+            <p>Proyecta tus ahorros e inversiones sin alterar tus registros reales.</p>
         </section>
 
-        <!-- BLOQUE 2: Filas de 3 Tarjetas KPI -->
-        <section class="fila-tarjetas">
-            <div class="tarjeta kpi">
-                <h3>Balance Total</h3>
-                <p class="monto positivo">$1,500.00</p>
-            </div>
-            <div class="tarjeta kpi">
-                <h3>Total Ingresos</h3>
-                <p class="monto positivo">$3,000.00</p>
-            </div>
-            <div class="tarjeta kpi">
-                <h3>Total Gastos</h3>
-                <p class="monto negativo">$1,500.00</p>
-            </div>
+        <!-- BLOQUE 2: Parámetros del Simulador -->
+        <section>
+            <h3>Configuración de la Simulación</h3>
+            <form id="form-simulador">
+                <label>
+                    Monto Inicial ($)
+                    <input type="number" id="sim-monto-inicial" placeholder="1000" value="1000">
+                </label>
+
+                <label>
+                    Aporte Mensual ($)
+                    <input type="number" id="sim-aporte-mensual" placeholder="200" value="200">
+                </label>
+
+                <label>
+                    Tasa de Interés Anual (%)
+                    <input type="number" id="sim-interes" step="0.1" placeholder="5" value="5">
+                </label>
+
+                <label>
+                    Plazo (Meses)
+                    <input type="number" id="sim-plazo" placeholder="12" value="12">
+                </label>
+
+                <div class="acciones">
+                    <button type="button" id="btn-calcular-sim" class="btn btn-primario">Calcular Proyección</button>
+                </div>
+            </form>
         </section>
 
-        <!-- BLOQUE 3: Barra de progreso -->
-        <section class="tarjeta">
-            <h3>Meta Mensual</h3>
-            <!-- barra aquí -->
-        </section>
-
-        <!-- BLOQUE 4: Accesos Rápidos (Botones lado a lado) -->
-        <section class="fila-botones">
-            <a href="ingresos.html" class="btn btn-positivo">+ Registrar Ingreso</a>
-            <a href="gastos.html" class="btn btn-negativo">- Registrar Gasto</a>
-            <a href="simulador.html" class="btn btn-primario">Proyectar Ahorro</a>
+        <!-- BLOQUE 3: Resultados Proyectados -->
+        <section class="kpis">
+            <article>
+                <h3>Total Depositado</h3>
+                <p class="monto" id="sim-resultado-depositado">$3,400.00</p>
+            </article>
+            <article>
+                <h3>Intereses Generados</h3>
+                <p class="monto positivo" id="sim-resultado-intereses">$112.50</p>
+            </article>
+            <article>
+                <h3>Monto Final Estimado</h3>
+                <p class="monto positivo" id="sim-resultado-total">$3,512.50</p>
+            </article>
         </section>
     </main>
 

@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/global.css">
-    <title>Ingresos</title>
+    <title>Registrar Ingreso - Finanzas</title>
 </head>
 <body>
     <header>
         <nav>
             <a href="dashboard.html">DASHBOARD</a>
-            <a href="ingresos.html">INGRESOS</a>
+            <a href="ingresos.html" class="active">INGRESOS</a>
             <a href="gastos.html">GASTOS</a>
             <a href="simulador.html">SIMULADOR</a>
             <a href="historial.html">HISTORIAL</a>
@@ -19,41 +19,52 @@
     </header>
 
     <main>
-        
+        <section>
+            <h1>Registrar Nuevo Ingreso</h1>
+            <p>Ingresa los detalles del monto recibido.</p>
 
-        <!-- BLOQUE 1: Encabezado -->
-        <section class="tarjeta">
-            <h1>Gestión de Ingresos y Definición de Metas</h1>
-            <p>Fecha: <span id="fecha">11/08/2026</span></p>
-        </section>
+            <form id="form-ingreso">
+                <label>
+                    Monto ($)
+                    <input type="number" id="monto" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
+                </label>
 
-        <!-- BLOQUE 2: Filas de 3 Tarjetas KPI -->
-        <section class="fila-tarjetas">
-            <div class="tarjeta kpi">
-                <h3>Balance Total</h3>
-                <p class="monto positivo">$1,500.00</p>
-            </div>
-            <div class="tarjeta kpi">
-                <h3>Total Ingresos</h3>
-                <p class="monto positivo">$3,000.00</p>
-            </div>
-            <div class="tarjeta kpi">
-                <h3>Total Gastos</h3>
-                <p class="monto negativo">$1,500.00</p>
-            </div>
-        </section>
+                <label>
+                    Categoría / Fuente
+                    <select id="categoria" name="categoria" required>
+                        <option value="" disabled selected>Selecciona una opción</option>
+                        <option value="salario">Salario / Sueldo</option>
+                        <option value="freelance">Freelance / Trabajos independientes</option>
+                        <option value="inversiones">Inversiones / Rendimientos</option>
+                        <option value="ventas">Ventas</option>
+                        <option value="otros">Otros</option>
+                    </select>
+                </label>
 
-        <!-- BLOQUE 3: Barra de progreso -->
-        <section class="tarjeta">
-            <h3>Meta Mensual</h3>
-            <!-- barra aquí -->
-        </section>
+                <label>
+                    Fecha
+                    <input type="date" id="fecha" name="fecha" required>
+                </label>
 
-        <!-- BLOQUE 4: Accesos Rápidos (Botones lado a lado) -->
-        <section class="fila-botones">
-            <a href="ingresos.html" class="btn btn-positivo">+ Registrar Ingreso</a>
-            <a href="gastos.html" class="btn btn-negativo">- Registrar Gasto</a>
-            <a href="simulador.html" class="btn btn-primario">Proyectar Ahorro</a>
+                <label>
+                    Frecuencia
+                    <select id="frecuencia" name="frecuencia">
+                        <option value="puntual">Puntual (Único)</option>
+                        <option value="mensual">Mensual</option>
+                        <option value="quincenal">Quincenal</option>
+                    </select>
+                </label>
+
+                <label class="full">
+                    Descripción / Nota
+                    <input type="text" id="descripcion" name="descripcion" placeholder="Ej: Bonificación de fin de mes">
+                </label>
+
+                <div class="acciones">
+                    <button type="submit" class="btn btn-positivo">Guardar Ingreso</button>
+                    <a href="dashboard.html" class="btn btn-secundario">Cancelar</a>
+                </div>
+            </form>
         </section>
     </main>
 

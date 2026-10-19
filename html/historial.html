@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/global.css">
-    <title>Historial</title>
+    <title>Historial - Finanzas</title>
 </head>
 <body>
     <header>
@@ -13,47 +13,66 @@
             <a href="ingresos.html">INGRESOS</a>
             <a href="gastos.html">GASTOS</a>
             <a href="simulador.html">SIMULADOR</a>
-            <a href="historial.html">HISTORIAL</a>
+            <a href="historial.html" class="active">HISTORIAL</a>
             <a href="reportes.html">REPORTES</a>
         </nav>
     </header>
 
     <main>
-        
-
-        <!-- BLOQUE 1: Encabezado -->
-        <section class="tarjeta">
-            <h1>Historial de movimientos</h1>
-            <p>Fecha: <span id="fecha">11/08/2026</span></p>
+        <!-- BLOQUE 1: Encabezado con Filtro -->
+        <section>
+            <header>
+                <div>
+                    <h1>Historial de Transacciones</h1>
+                    <p>Registro detallado de todos tus movimientos financieros.</p>
+                </div>
+                <label>
+                    <select id="filtro-tipo">
+                        <option value="todos">Todos los movimientos</option>
+                        <option value="ingreso">Solo Ingresos</option>
+                        <option value="gasto">Solo Gastos</option>
+                    </select>
+                </label>
+            </header>
         </section>
 
-        <!-- BLOQUE 2: Filas de 3 Tarjetas KPI -->
-        <section class="fila-tarjetas">
-            <div class="tarjeta kpi">
-                <h3>Balance Total</h3>
-                <p class="monto positivo">$1,500.00</p>
-            </div>
-            <div class="tarjeta kpi">
-                <h3>Total Ingresos</h3>
-                <p class="monto positivo">$3,000.00</p>
-            </div>
-            <div class="tarjeta kpi">
-                <h3>Total Gastos</h3>
-                <p class="monto negativo">$1,500.00</p>
-            </div>
-        </section>
-
-        <!-- BLOQUE 3: Barra de progreso -->
-        <section class="tarjeta">
-            <h3>Meta Mensual</h3>
-            <!-- barra aquí -->
-        </section>
-
-        <!-- BLOQUE 4: Accesos Rápidos (Botones lado a lado) -->
-        <section class="fila-botones">
-            <a href="ingresos.html" class="btn btn-positivo">+ Registrar Ingreso</a>
-            <a href="gastos.html" class="btn btn-negativo">- Registrar Gasto</a>
-            <a href="simulador.html" class="btn btn-primario">Proyectar Ahorro</a>
+        <!-- BLOQUE 2: Tabla de Movimientos -->
+        <section>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Categoría</th>
+                        <th>Descripción</th>
+                        <th>Monto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-historial-body">
+                    <!-- Filas dinámicas generadas desde JavaScript -->
+                    <tr>
+                        <td>19/10/2026</td>
+                        <td><span class="badge ingreso">Ingreso</span></td>
+                        <td>Salario</td>
+                        <td>Sueldo mensual</td>
+                        <td class="monto positivo">+$3,000.00</td>
+                        <td>
+                            <button type="button" class="btn btn-secundario" title="Eliminar">🗑️</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>18/10/2026</td>
+                        <td><span class="badge gasto">Gasto</span></td>
+                        <td>Alimentación</td>
+                        <td>Supermercado</td>
+                        <td class="monto negativo">-$1,500.00</td>
+                        <td>
+                            <button type="button" class="btn btn-secundario" title="Eliminar">🗑️</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
     </main>
 
