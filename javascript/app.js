@@ -46,6 +46,33 @@ class Ingreso {
   }
 }
 
+class Gasto {
+  static guardarGasto(monto, categoria, fecha, frecuencia, descripcion) {
+    const gastos = Almacenamiento.get('gastos', []);
+
+    const nuevoGasto = {
+      id: crypto.randomUUID(),
+      monto: Number(monto),
+      categoria,
+      fecha,
+      frecuencia,
+      descripcion
+    };
+
+    gastos.push(nuevoGasto);
+    Almacenamiento.set('gastos', gastos);
+  }
+
+  static calcularMontoTotal(){
+    const gastos = Almacenamiento.get('gastos', []);
+    let gastoTotal = 0;
+    gastos.forEach(unGasto => {
+      gastoTotal+=unGasto.monto;
+    });
+    return gastoTotal;
+  }
+}
+
 // FUNCIONES AUXILIARES
 
 function establecerFechaActual() {
@@ -68,6 +95,12 @@ function iniciarModuloDashboard() {
 
   const montoTotalIngresos = Ingreso.calcularMontoTotal();
   totalIngresos.textContent = montoTotalIngresos;
+
+  const montoTotalGastos = Gasto.calcularMontoTotal();
+  totalGastos.textContent = montoTotalGastos;
+
+  const balance = montoTotalIngresos - montoTotalGastos;
+  balanceTotal.textContent = balance;
 }
 
 function iniciarModuloIngresos() {
@@ -99,6 +132,56 @@ function iniciarModuloIngresos() {
   });
 }
 
+function iniciarModuloGastos() {
+  const formulario = document.getElementById('form-gasto');
+
+  formulario.addEventListener('submit', function(evento) {
+    // Evitamos que la página se recargue
+    evento.preventDefault();
+
+    // Obtenemos los valores del formulario
+    const monto = document.getElementById('monto').value;
+    const categoria = document.getElementById('categoria').value;
+    const metodoPago = document.getElementById('metodo-pago').value;
+    const fecha = document.getElementById('fecha').value;
+    const descripcion = document.getElementById('descripcion').value;
+
+    // Guardamos el gasto
+    Gasto.guardarGasto(
+      monto,
+      categoria,
+      fecha,
+      metodoPago,
+      descripcion
+    );
+
+    alert('¡Gasto guardado correctamente!');
+
+    formulario.reset();
+  });
+}
+
+function iniciarModuloSimulador() {
+  const formulario = document.getElementById('form-simulador');
+
+  formulario.addEventListener('submit', function(evento) {
+    // Evitamos que la página se recargue
+    evento.preventDefault();
+
+    // Obtenemos los valores del formulario
+    const monto = document.getElementById('monto').value;
+    const plazo = document.getElementById('plazo').value;
+    const tasaInteres = document.getElementById('tasa-interes').value;
+
+    // Calculamos el resultado del simulador
+    const resultado = (monto * (1 + (tasaInteres / 100) * plazo)).toFixed(2);
+
+    // Mostramos el resultado en la página
+    const resultadoElemento = document.getElementById('resultado');
+    resultadoElemento.textContent = `El monto final después de ${plazo} años será: $${resultado}`;
+  });
+}
+
 function iniciarApp() {
   const paginaActiva = document.querySelector('a.activo');
 
@@ -115,6 +198,9 @@ function iniciarApp() {
       break;
     case 'ingresos.html':
       iniciarModuloIngresos();
+      break;
+    case 'gastos.html':
+      iniciarModuloGastos();
       break;
 
     default:
