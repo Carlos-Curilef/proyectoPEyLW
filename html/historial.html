@@ -1,82 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/global.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/global.css" />
     <title>Historial - Finanzas</title>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <nav>
-            <a href="dashboard.html">DASHBOARD</a>
-            <a href="ingresos.html">INGRESOS</a>
-            <a href="gastos.html">GASTOS</a>
-            <a href="simulador.html">SIMULADOR</a>
-            <a href="historial.html" class="activo">HISTORIAL</a>
-            <a href="reportes.html">REPORTES</a>
-        </nav>
+      <nav>
+        <a href="dashboard.html">DASHBOARD</a>
+        <a href="ingresos.html">INGRESOS</a>
+        <a href="gastos.html">GASTOS</a>
+        <a href="simulador.html">SIMULADOR</a>
+        <a href="historial.html" class="activo">HISTORIAL</a>
+        <a href="reportes.html">REPORTES</a>
+      </nav>
     </header>
 
     <main>
-        <!-- BLOQUE 1: Encabezado con Filtro -->
-        <section>
-            <header>
-                <div>
-                    <h1>Historial de Transacciones</h1>
-                    <p>Registro detallado de todos tus movimientos financieros.</p>
-                </div>
-                <label>
-                    <select id="filtro-tipo">
-                        <option value="todos">Todos los movimientos</option>
-                        <option value="ingreso">Solo Ingresos</option>
-                        <option value="gasto">Solo Gastos</option>
-                    </select>
-                </label>
-            </header>
-        </section>
+      <!-- BLOQUE 1: Encabezado con Filtro -->
+      <section>
+        <header>
+          <div>
+            <h1>Historial de Transacciones</h1>
+            <p>Registro detallado de todos tus movimientos financieros.</p>
+          </div>
+          <label>
+            <select id="filtro-tipo">
+              <option value="todos">Todos los movimientos</option>
+              <option value="ingreso">Solo Ingresos</option>
+              <option value="gasto">Solo Gastos</option>
+            </select>
+          </label>
+        </header>
+      </section>
 
-        <!-- BLOQUE 2: Tabla de Movimientos -->
-        <section>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Tipo</th>
-                        <th>Categoría</th>
-                        <th>Descripción</th>
-                        <th>Monto</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-historial-body">
-                    <!-- Filas dinámicas generadas desde JavaScript -->
-                    <tr>
-                        <td>19/10/2026</td>
-                        <td><span class="badge ingreso">Ingreso</span></td>
-                        <td>Salario</td>
-                        <td>Sueldo mensual</td>
-                        <td class="monto positivo">+$3,000.00</td>
-                        <td>
-                            <button type="button" class="btn btn-secundario" title="Eliminar">🗑️</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>18/10/2026</td>
-                        <td><span class="badge gasto">Gasto</span></td>
-                        <td>Alimentación</td>
-                        <td>Supermercado</td>
-                        <td class="monto negativo">-$1,500.00</td>
-                        <td>
-                            <button type="button" class="btn btn-secundario" title="Eliminar">🗑️</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+      <!-- BLOQUE 2: Tabla de Movimientos -->
+      <section>
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Categoría</th>
+              <th>Descripción</th>
+              <th>Monto</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-historial-body">
+            <!-- Filas dinámicas generadas desde JavaScript -->
+          </tbody>
+        </table>
+      </section>
     </main>
 
     <footer>Powered By Tybo</footer>
     <script src="/javascript/app.js"></script>
-</body>
+  </body>
 </html>

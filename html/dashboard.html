@@ -1,61 +1,90 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/global.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/global.css" />
     <title>Dashboard - Finanzas</title>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <nav>
-            <a href="dashboard.html" class="activo">DASHBOARD</a>
-            <a href="ingresos.html">INGRESOS</a>
-            <a href="gastos.html">GASTOS</a>
-            <a href="simulador.html">SIMULADOR</a>
-            <a href="historial.html">HISTORIAL</a>
-            <a href="reportes.html">REPORTES</a>
-        </nav>
+      <nav>
+        <a href="dashboard.html" class="activo">DASHBOARD</a>
+        <a href="ingresos.html">INGRESOS</a>
+        <a href="gastos.html">GASTOS</a>
+        <a href="simulador.html">SIMULADOR</a>
+        <a href="historial.html">HISTORIAL</a>
+        <a href="reportes.html">REPORTES</a>
+      </nav>
     </header>
 
     <main>
-        <!-- BLOQUE 1: Encabezado -->
-        <section>
-            <h1>Hola, este es tu resumen financiero</h1>
-            <p>Fecha: <time id="fecha">11/08/2026</time></p>
-        </section>
+      <!-- BLOQUE 1: Encabezado -->
+      <section>
+        <h1>Hola, este es tu resumen financiero</h1>
+        <p>Fecha: <time id="fecha">11/08/2026</time></p>
+      </section>
 
-        <!-- BLOQUE 2: Tarjetas KPI -->
-        <section class="kpis">
-            <article>
-                <h3>Balance Total</h3>
-                <p class="monto positivo" id="balance-total">0</p>
-            </article>
-            <article>
-                <h3>Total Ingresos</h3>
-                <p class="monto positivo" id="total-ingresos">0</p>
-            </article>
-            <article>
-                <h3>Total Gastos</h3>
-                <p class="monto negativo" id="total-gastos">0</p>
-            </article>
-        </section>
+      <!-- BLOQUE 2: Tarjetas KPI -->
+      <section class="kpis">
+        <article>
+          <h3>Balance Total</h3>
+          <p class="monto positivo" id="balance-total">0</p>
+        </article>
+        <article>
+          <h3>Total Ingresos</h3>
+          <p class="monto positivo" id="total-ingresos">0</p>
+        </article>
+        <article>
+          <h3>Total Gastos</h3>
+          <p class="monto negativo" id="total-gastos">0</p>
+        </article>
+      </section>
 
-        <!-- BLOQUE 3: Meta Mensual (Usa la barra nativa <progress>) -->
-        <section>
-            <h3>Meta Mensual (<span id="meta-porcentaje">75%</span>)</h3>
-            <progress id="meta-barra" value="75" max="100"></progress>
-        </section>
-
-        <!-- BLOQUE 4: Accesos Rápidos -->
-        <section class="acciones">
-            <a href="ingresos.html" class="btn btn-positivo">+ Registrar Ingreso</a>
-            <a href="gastos.html" class="btn btn-negativo">- Registrar Gasto</a>
-            <a href="simulador.html" class="btn btn-primario">Proyectar Ahorro</a>
-        </section>
+      <!-- BLOQUE 3: Meta Mensual (Usa la barra nativa <progress>) -->
+      <!-- BLOQUE: Meta Mensual de Ahorro -->
+      <section>
+        <h3>Meta Mensual (<span id="meta-porcentaje">75%</span>)</h3>
+        <p>
+          Progreso actual: $<span id="meta-actual">750.00</span> de $<span
+            id="meta-objetivo"
+            >1,000.00</span
+          >
+        </p>
+        <article>
+          <!-- Barra de progreso nativa (ya estilizada en tu global.css) -->
+          <progress id="meta-barra" value="75" max="100"></progress>
+        </article>
+        <article>
+          <!-- Formulario para configurar la meta usando las clases exactas de tu CSS -->
+          <form id="form-meta">
+            <label>
+              <h3>Establecer Nueva Meta ($)</h3>
+              <input
+                type="number"
+                id="input-nueva-meta"
+                step="10"
+                min="1"
+                placeholder="Ej: 1500"
+                required
+              />
+            </label>
+            <div class="acciones">
+              <button type="submit" class="btn btn-primario">
+                Guardar Meta
+              </button>
+            </div>
+          </form>
+        </article>
+      </section>
+      <!-- BLOQUE 4: Accesos Rápidos -->
+      <section class="acciones">
+        <a href="ingresos.html" class="btn btn-positivo">+ Registrar Ingreso</a>
+        <a href="gastos.html" class="btn btn-negativo">- Registrar Gasto</a>
+        <a href="simulador.html" class="btn btn-primario">Proyectar Ahorro</a>
+      </section>
+      <script src="/javascript/app.js"></script>
     </main>
-
     <footer>Powered By Tybo</footer>
-    <script src="/javascript/app.js"></script>
-</body>
+  </body>
 </html>
