@@ -1,78 +1,102 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/global.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/global.css" />
     <title>Simulador Financiero - Finanzas</title>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <nav>
-            <a href="dashboard.html">DASHBOARD</a>
-            <a href="ingresos.html">INGRESOS</a>
-            <a href="gastos.html">GASTOS</a>
-            <a href="simulador.html" class="activo">SIMULADOR</a>
-            <a href="historial.html">HISTORIAL</a>
-            <a href="reportes.html">REPORTES</a>
-        </nav>
+      <nav>
+        <a href="dashboard.html">DASHBOARD</a>
+        <a href="ingresos.html">INGRESOS</a>
+        <a href="gastos.html">GASTOS</a>
+        <a href="simulador.html" class="activo">SIMULADOR</a>
+        <a href="historial.html">HISTORIAL</a>
+        <a href="reportes.html">REPORTES</a>
+      </nav>
     </header>
 
     <main>
-        <!-- BLOQUE 1: Encabezado -->
-        <section>
-            <h1>Simulador de Proyecciones</h1>
-            <p>Proyecta tus ahorros e inversiones sin alterar tus registros reales.</p>
-        </section>
+      <!-- BLOQUE 1: Encabezado -->
+      <section>
+        <h1>Simulador de Proyecciones</h1>
+        <p>
+          Proyecta tus ahorros e inversiones sin alterar tus registros reales.
+        </p>
+      </section>
 
-        <!-- BLOQUE 2: Parámetros del Simulador -->
-        <section>
-            <h3>Configuración de la Simulación</h3>
-            <form id="form-simulador">
-                <label>
-                    Monto Inicial ($)
-                    <input type="number" id="sim-monto-inicial" placeholder="1000" value="1000">
-                </label>
+      <!-- BLOQUE 2: Parámetros del Simulador -->
+      <section>
+        <h3>Configuración de la Simulación</h3>
+        <form id="form-simulador">
+          <label>
+            Monto Inicial ($)
+            <input
+              type="number"
+              id="sim-monto-inicial"
+              placeholder="1000"
+              value="1000"
+            />
+          </label>
 
-                <label>
-                    Aporte Mensual ($)
-                    <input type="number" id="sim-aporte-mensual" placeholder="200" value="200">
-                </label>
+          <label>
+            Aporte Mensual ($)
+            <input
+              type="number"
+              id="sim-aporte-mensual"
+              placeholder="200"
+              value="200"
+            />
+          </label>
 
-                <label>
-                    Tasa de Interés Anual (%)
-                    <input type="number" id="sim-interes" step="0.1" placeholder="5" value="5">
-                </label>
+          <label>
+            Tasa de Interés Anual (%)
+            <input
+              type="number"
+              id="sim-interes"
+              step="0.1"
+              placeholder="5"
+              value="5"
+            />
+          </label>
 
-                <label>
-                    Plazo (Meses)
-                    <input type="number" id="sim-plazo" placeholder="12" value="12">
-                </label>
+          <label>
+            Plazo (Meses)
+            <input type="number" id="sim-plazo" placeholder="12" value="12" />
+          </label>
 
-                <div class="acciones">
-                    <button type="button" id="btn-calcular-sim" class="btn btn-primario">Calcular Proyección</button>
-                </div>
-            </form>
-        </section>
+          <div class="acciones">
+            <button
+              type="submit"
+              id="btn-calcular-sim"
+              class="btn btn-primario"
+            >
+              Calcular Proyección
+            </button>
+          </div>
+        </form>
+      </section>
 
-        <!-- BLOQUE 3: Resultados Proyectados -->
-        <section class="kpis">
-            <article>
-                <h3>Total Depositado</h3>
-                <p class="monto" id="sim-resultado-depositado">$3,400.00</p>
-            </article>
-            <article>
-                <h3>Intereses Generados</h3>
-                <p class="monto positivo" id="sim-resultado-intereses">$112.50</p>
-            </article>
-            <article>
-                <h3>Monto Final Estimado</h3>
-                <p class="monto positivo" id="sim-resultado-total">$3,512.50</p>
-            </article>
-        </section>
+      <!-- BLOQUE 3: Resultados Proyectados -->
+      <section class="kpis">
+        <article>
+          <h3>Total Depositado</h3>
+          <p class="monto" id="sim-resultado-depositado">$3,400.00</p>
+        </article>
+        <article>
+          <h3>Intereses Generados</h3>
+          <p class="monto positivo" id="sim-resultado-intereses">$112.50</p>
+        </article>
+        <article>
+          <h3>Monto Final Estimado</h3>
+          <p class="monto positivo" id="sim-resultado-total">$3,512.50</p>
+        </article>
+      </section>
     </main>
 
     <footer>Powered By Tybo</footer>
     <script src="/javascript/app.js"></script>
-</body>
+  </body>
 </html>

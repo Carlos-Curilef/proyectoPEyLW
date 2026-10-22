@@ -102,6 +102,16 @@ class Gasto {
   }
 }
 
+class Meta {
+  static guardarMeta(monto) {
+    Almacenamiento.set("meta", Number(monto));
+  }
+
+  static obtenerMeta() {
+    return Almacenamiento.get("meta", 1000); // Valor por defecto de 1000 si no hay meta
+  }
+}
+
 // EVENTOS
 function inicializarEventosHistorial() {
   const selectFiltro = document.getElementById("filtro-tipo");
@@ -178,6 +188,45 @@ function iniciarModuloDashboard() {
 
   const balance = montoTotalIngresos - montoTotalGastos;
   if (balanceTotal) balanceTotal.textContent = balance;
+
+  // --- LÓGICA DE LA META ---
+  const metaActual = Meta.obtenerMeta();
+  const porcentaje =
+    metaActual > 0 ? (montoTotalIngresos / metaActual) * 100 : 0;
+
+  const spanPorcentaje = document.getElementById("meta-porcentaje");
+  const spanActual = document.getElementById("meta-actual");
+  const spanObjetivo = document.getElementById("meta-objetivo");
+  const barraMeta = document.getElementById("meta-barra");
+
+  // Mostrar valores iniciales al cargar el dashboard
+  if (spanPorcentaje) spanPorcentaje.textContent = `${porcentaje.toFixed(0)}%`;
+  if (spanActual) spanActual.textContent = montoTotalIngresos.toFixed(2);
+  if (spanObjetivo) spanObjetivo.textContent = metaActual.toFixed(2);
+  if (barraMeta) barraMeta.value = porcentaje;
+
+  // Evento del formulario de la meta
+  const formularioMeta = document.getElementById("form-meta");
+  if (!formularioMeta) return;
+
+  formularioMeta.addEventListener("submit", function (evento) {
+    evento.preventDefault();
+    const montoMeta = document.getElementById("input-nueva-meta").value;
+
+    Meta.guardarMeta(montoMeta);
+    const nuevaMeta = Meta.obtenerMeta();
+    const nuevoPorcentaje =
+      nuevaMeta > 0 ? (montoTotalIngresos / nuevaMeta) * 100 : 0;
+
+    if (spanPorcentaje)
+      spanPorcentaje.textContent = `${nuevoPorcentaje.toFixed(0)}%`;
+    if (spanActual) spanActual.textContent = montoTotalIngresos.toFixed(2);
+    if (spanObjetivo) spanObjetivo.textContent = nuevaMeta.toFixed(2);
+    if (barraMeta) barraMeta.value = nuevoPorcentaje;
+
+    alert("¡Meta guardada correctamente!");
+    formularioMeta.reset();
+  });
 }
 
 function iniciarModuloIngresos() {
@@ -216,21 +265,60 @@ function iniciarModuloGastos() {
   });
 }
 
-function iniciarModuloSimulador() {
-  const formulario = document.getElementById("form-simulador");
-  if (!formulario) return;
+function iniciarModuloDashboard() {
+  const fecha = document.getElementById("fecha");
+  if (fecha) fecha.textContent = establecerFechaActual();
 
-  formulario.addEventListener("submit", function (evento) {
+  const totalIngresos = document.getElementById("total-ingresos");
+  const totalGastos = document.getElementById("total-gastos");
+  const balanceTotal = document.getElementById("balance-total");
+
+  const montoTotalIngresos = Ingreso.calcularMontoTotal();
+  if (totalIngresos) totalIngresos.textContent = montoTotalIngresos;
+
+  const montoTotalGastos = Gasto.calcularMontoTotal();
+  if (totalGastos) totalGastos.textContent = montoTotalGastos;
+
+  const balance = montoTotalIngresos - montoTotalGastos;
+  if (balanceTotal) balanceTotal.textContent = balance;
+
+  // --- LÓGICA DE LA META ---
+  const metaActual = Meta.obtenerMeta();
+  const porcentaje =
+    metaActual > 0 ? (montoTotalIngresos / metaActual) * 100 : 0;
+
+  const spanPorcentaje = document.getElementById("meta-porcentaje");
+  const spanActual = document.getElementById("meta-actual");
+  const spanObjetivo = document.getElementById("meta-objetivo");
+  const barraMeta = document.getElementById("meta-barra");
+
+  // Mostrar valores iniciales al cargar el dashboard
+  if (spanPorcentaje) spanPorcentaje.textContent = `${porcentaje.toFixed(0)}%`;
+  if (spanActual) spanActual.textContent = montoTotalIngresos.toFixed(2);
+  if (spanObjetivo) spanObjetivo.textContent = metaActual.toFixed(2);
+  if (barraMeta) barraMeta.value = porcentaje;
+
+  // Evento del formulario de la meta
+  const formularioMeta = document.getElementById("form-meta");
+  if (!formularioMeta) return;
+
+  formularioMeta.addEventListener("submit", function (evento) {
     evento.preventDefault();
-    const monto = document.getElementById("monto").value;
-    const plazo = document.getElementById("plazo").value;
-    const tasaInteres = document.getElementById("tasa-interes").value;
+    const montoMeta = document.getElementById("input-nueva-meta").value;
 
-    const resultado = (monto * (1 + (tasaInteres / 100) * plazo)).toFixed(2);
-    const resultadoElemento = document.getElementById("resultado");
-    if (resultadoElemento) {
-      resultadoElemento.textContent = `El monto final después de ${plazo} años será: $${resultado}`;
-    }
+    Meta.guardarMeta(montoMeta);
+    const nuevaMeta = Meta.obtenerMeta();
+    const nuevoPorcentaje =
+      nuevaMeta > 0 ? (montoTotalIngresos / nuevaMeta) * 100 : 0;
+
+    if (spanPorcentaje)
+      spanPorcentaje.textContent = `${nuevoPorcentaje.toFixed(0)}%`;
+    if (spanActual) spanActual.textContent = montoTotalIngresos.toFixed(2);
+    if (spanObjetivo) spanObjetivo.textContent = nuevaMeta.toFixed(2);
+    if (barraMeta) barraMeta.value = nuevoPorcentaje;
+
+    alert("¡Meta guardada correctamente!");
+    formularioMeta.reset();
   });
 }
 
