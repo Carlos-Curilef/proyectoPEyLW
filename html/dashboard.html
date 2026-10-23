@@ -46,32 +46,38 @@
       <section>
         <h3>Meta Mensual (<span id="meta-porcentaje">75%</span>)</h3>
         <p>
-          Progreso actual: $<span id="meta-actual">750.00</span> de $<span
+          Progreso actual: $<span id="meta-actual"></span> de $<span
             id="meta-objetivo"
-            >1,000.00</span
-          >
+          ></span>
         </p>
         <article>
           <!-- Barra de progreso nativa (ya estilizada en tu global.css) -->
           <progress id="meta-barra" value="75" max="100"></progress>
         </article>
         <article>
-          <!-- Formulario para configurar la meta usando las clases exactas de tu CSS -->
+          <!-- Formulario para configurar o eliminar la meta -->
           <form id="form-meta">
             <label>
               <h3>Establecer Nueva Meta ($)</h3>
               <input
                 type="number"
                 id="input-nueva-meta"
-                step="10"
+                step="1"
                 min="1"
                 placeholder="Ej: 1500"
-                required
               />
             </label>
             <div class="acciones">
               <button type="submit" class="btn btn-primario">
                 Guardar Meta
+              </button>
+              <!-- BOTÓN AGREGADO PARA BORRAR LA META -->
+              <button
+                type="button"
+                id="btn-limpiar-meta"
+                class="btn btn-negativo"
+              >
+                Limpiar Meta
               </button>
             </div>
           </form>
