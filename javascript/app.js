@@ -145,6 +145,15 @@ function inicializarEventosHistorial() {
   }
 }
 
+function inicializarEventosReportes() {
+  const filtroPeriodo = document.getElementById("filtro-periodo");
+  if (filtroPeriodo) {
+    filtroPeriodo.addEventListener("change", () => {
+      iniciarModuloReportes();
+    });
+  }
+}
+
 // FUNCIONES AUXILIARES
 
 function establecerFechaActual() {
@@ -170,69 +179,49 @@ function filtarHistoria(criterio) {
   return resultado;
 }
 
+function filtrarDistribucion(periodo) {
+  const ingresos = Ingreso.darTodosLosIngresos();
+  const gastos = Gasto.darTodosLosGastos();
+  const transacciones = [...ingresos, ...gastos];
+
+  const hoy = new Date();
+  const anioActual = hoy.getFullYear();
+  const mesActual = hoy.getMonth();
+
+  return transacciones.filter((t) => {
+    if (!t.fecha) return false;
+    const fechaT = new Date(t.fecha);
+    if (isNaN(fechaT)) return false;
+
+    const anioT = fechaT.getFullYear();
+    const mesT = fechaT.getMonth();
+
+    if (periodo === "este-mes") {
+      return anioT === anioActual && mesT === mesActual;
+    } else if (periodo === "mes-anterior") {
+      let mesAnterior = mesActual - 1;
+      let anioAnterior = anioActual;
+      if (mesAnterior < 0) {
+        mesAnterior = 11;
+        anioAnterior--;
+      }
+      return anioT === anioAnterior && mesT === mesAnterior;
+    } else if (periodo === "ultimo-trimestre") {
+      const diffMeses = (anioActual - anioT) * 12 + (mesActual - mesT);
+      return diffMeses >= 0 && diffMeses < 3;
+    } else if (periodo === "anio-actual") {
+      return anioT === anioActual;
+    }
+    return true;
+  });
+}
+
 function obtenerPorcentaje(meta, montoActual) {
   if (meta <= 0) return 0;
   return (montoActual / meta) * 100;
 }
 
 // MÓDULOS
-
-function iniciarModuloDashboard() {
-  const fecha = document.getElementById("fecha");
-  if (fecha) fecha.textContent = establecerFechaActual();
-
-  const totalIngresos = document.getElementById("total-ingresos");
-  const totalGastos = document.getElementById("total-gastos");
-  const balanceTotal = document.getElementById("balance-total");
-
-  const montoTotalIngresos = Ingreso.calcularMontoTotal();
-  if (totalIngresos) totalIngresos.textContent = montoTotalIngresos;
-
-  const montoTotalGastos = Gasto.calcularMontoTotal();
-  if (totalGastos) totalGastos.textContent = montoTotalGastos;
-
-  const balance = montoTotalIngresos - montoTotalGastos;
-  if (balanceTotal) balanceTotal.textContent = balance;
-
-  // --- LÓGICA DE LA META ---
-  const metaActual = Meta.obtenerMeta();
-  const porcentaje =
-    metaActual > 0 ? (montoTotalIngresos / metaActual) * 100 : 0;
-
-  const spanPorcentaje = document.getElementById("meta-porcentaje");
-  const spanActual = document.getElementById("meta-actual");
-  const spanObjetivo = document.getElementById("meta-objetivo");
-  const barraMeta = document.getElementById("meta-barra");
-
-  // Mostrar valores iniciales al cargar el dashboard
-  if (spanPorcentaje) spanPorcentaje.textContent = `${porcentaje.toFixed(0)}%`;
-  if (spanActual) spanActual.textContent = montoTotalIngresos.toFixed(2);
-  if (spanObjetivo) spanObjetivo.textContent = metaActual.toFixed(2);
-  if (barraMeta) barraMeta.value = porcentaje;
-
-  // Evento del formulario de la meta
-  const formularioMeta = document.getElementById("form-meta");
-  if (!formularioMeta) return;
-
-  formularioMeta.addEventListener("submit", function (evento) {
-    evento.preventDefault();
-    const montoMeta = document.getElementById("input-nueva-meta").value;
-
-    Meta.guardarMeta(montoMeta);
-    const nuevaMeta = Meta.obtenerMeta();
-    const nuevoPorcentaje =
-      nuevaMeta > 0 ? (montoTotalIngresos / nuevaMeta) * 100 : 0;
-
-    if (spanPorcentaje)
-      spanPorcentaje.textContent = `${nuevoPorcentaje.toFixed(0)}%`;
-    if (spanActual) spanActual.textContent = montoTotalIngresos.toFixed(2);
-    if (spanObjetivo) spanObjetivo.textContent = nuevaMeta.toFixed(2);
-    if (barraMeta) barraMeta.value = nuevoPorcentaje;
-
-    alert("¡Meta guardada correctamente!");
-    formularioMeta.reset();
-  });
-}
 
 function iniciarModuloIngresos() {
   const formulario = document.getElementById("form-ingreso");
@@ -364,6 +353,51 @@ function iniciarModuloDashboard() {
   }
 }
 
+function iniciarModuloSimulador() {
+  const formulario = document.getElementById("form-simulador");
+  if (!formulario) return;
+
+  formulario.addEventListener("submit", function (evento) {
+    evento.preventDefault();
+
+    // 1. Obtener valores de los inputs
+    const montoInicial =
+      Number(document.getElementById("sim-monto-inicial").value) || 0;
+    const aporteMensual =
+      Number(document.getElementById("sim-aporte-mensual").value) || 0;
+    const tasaAnual = Number(document.getElementById("sim-interes").value) || 0;
+    const plazoMeses = Number(document.getElementById("sim-plazo").value) || 0;
+
+    // 2. Calcular tasa mensual y total depositado
+    const tasaMensual = tasaAnual / 100 / 12;
+    let saldoActual = montoInicial;
+    let totalDepositado = montoInicial + aporteMensual * plazoMeses;
+
+    // 3. Simular mes a mes el crecimiento por interés compuesto
+    for (let i = 0; i < plazoMeses; i++) {
+      saldoActual = saldoActual * (1 + tasaMensual) + aporteMensual;
+    }
+
+    if (plazoMeses === 0) {
+      saldoActual = montoInicial;
+      totalDepositado = montoInicial;
+    }
+
+    const interesesGenerados = Math.max(0, saldoActual - totalDepositado);
+
+    // 4. Mostrar resultados en las tarjetas KPI
+    const elDepositado = document.getElementById("sim-resultado-depositado");
+    const elIntereses = document.getElementById("sim-resultado-intereses");
+    const elTotal = document.getElementById("sim-resultado-total");
+
+    if (elDepositado)
+      elDepositado.textContent = `$${totalDepositado.toFixed(2)}`;
+    if (elIntereses)
+      elIntereses.textContent = `$${interesesGenerados.toFixed(2)}`;
+    if (elTotal) elTotal.textContent = `$${saldoActual.toFixed(2)}`;
+  });
+}
+
 function iniciarModuloHistoria() {
   const selectFiltro = document.getElementById("filtro-tipo");
   const filtro = selectFiltro ? selectFiltro.value : "todos";
@@ -403,6 +437,95 @@ function iniciarModuloHistoria() {
   });
 }
 
+function iniciarModuloReportes() {
+  const filtroPeriodo = document.getElementById("filtro-periodo");
+  const periodo = filtroPeriodo ? filtroPeriodo.value : "este-mes";
+
+  const transaccionesPeriodo = filtrarDistribucion(periodo);
+  const gastosPeriodo = transaccionesPeriodo.filter((t) => t.tipo === "gasto");
+  const ingresosPeriodo = transaccionesPeriodo.filter(
+    (t) => t.tipo === "ingreso",
+  );
+
+  // Totales del período
+  const totalGastos = gastosPeriodo.reduce((acc, g) => acc + g.monto, 0);
+  const totalIngresos = ingresosPeriodo.reduce((acc, i) => acc + i.monto, 0);
+
+  // 1. Promedio de Gasto Diario
+  const elPromedioDiario = document.getElementById("reporte-promedio-diario");
+  let dias = 30;
+  if (periodo === "este-mes") {
+    dias = new Date().getDate(); // Días transcurridos del mes actual
+  } else if (periodo === "anio-actual") {
+    dias = 365;
+  }
+  const promedioDiario = dias > 0 ? totalGastos / dias : 0;
+  if (elPromedioDiario) {
+    elPromedioDiario.textContent = `$${promedioDiario.toFixed(2)}`;
+  }
+
+  // 2. Tasa de Ahorro (Porcentaje de ingresos que no se gastaron)
+  const elTasaAhorro = document.getElementById("reporte-tasa-ahorro");
+  let tasaAhorro = 0;
+  if (totalIngresos > 0) {
+    tasaAhorro = Math.max(
+      0,
+      ((totalIngresos - totalGastos) / totalIngresos) * 100,
+    );
+  }
+  if (elTasaAhorro) {
+    elTasaAhorro.textContent = `${tasaAhorro.toFixed(1)}%`;
+  }
+
+  // 3. Categoría de Mayor Gasto
+  const elCategoriaTop = document.getElementById("reporte-categoria-top");
+  const categoriasGastos = {};
+  gastosPeriodo.forEach((g) => {
+    categoriasGastos[g.categoria] =
+      (categoriasGastos[g.categoria] || 0) + g.monto;
+  });
+
+  let categoriaMayor = "Sin gastos";
+  let maxMonto = 0;
+  for (const [cat, monto] of Object.entries(categoriasGastos)) {
+    if (monto > maxMonto) {
+      maxMonto = monto;
+      categoriaMayor = cat;
+    }
+  }
+  if (elCategoriaTop) {
+    elCategoriaTop.textContent = categoriaMayor;
+  }
+
+  // 4. Distribución de Gastos por Categoría (Lista y barras de progreso)
+  const listaDesglose = document.getElementById("lista-desglose");
+  if (listaDesglose) {
+    listaDesglose.innerHTML = "";
+
+    if (gastosPeriodo.length === 0) {
+      listaDesglose.innerHTML = `<li style="text-align: center; padding: 1rem; color: #6b7280;">No hay datos de gastos para mostrar en este período.</li>`;
+      return;
+    }
+
+    const categoriasOrdenadas = Object.entries(categoriasGastos).sort(
+      (a, b) => b[1] - a[1],
+    );
+
+    categoriasOrdenadas.forEach(([cat, monto]) => {
+      const porcentaje = totalGastos > 0 ? (monto / totalGastos) * 100 : 0;
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div>
+          <span>${cat}</span>
+          <span>$${monto.toFixed(2)} (${porcentaje.toFixed(0)}%)</span>
+        </div>
+        <progress value="${porcentaje.toFixed(0)}" max="100"></progress>
+      `;
+      listaDesglose.appendChild(li);
+    });
+  }
+}
+
 function iniciarApp() {
   const paginaActiva = document.querySelector("a.activo");
 
@@ -430,6 +553,10 @@ function iniciarApp() {
       // CORRECCIÓN: Inicializamos tanto la tabla como los eventos de filtrado al cargar la vista de historial
       iniciarModuloHistoria();
       inicializarEventosHistorial();
+      break;
+    case "reportes.html":
+      iniciarModuloReportes();
+      inicializarEventosReportes();
       break;
     default:
       console.log("Página no encontrada");
