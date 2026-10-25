@@ -1,4 +1,6 @@
-// CLASES
+// ==========================================
+// 1. CAPA DE PERSISTENCIA
+// ==========================================
 
 class Almacenamiento {
   static set(clave, valor) {
@@ -19,10 +21,13 @@ class Almacenamiento {
   }
 }
 
+// ==========================================
+// 2. CAPA DE NEGOCIO Y MODELOS
+// ==========================================
+
 class Ingreso {
   static guardarIngreso(monto, categoria, fecha, frecuencia, descripcion) {
     const ingresos = Almacenamiento.get("ingresos", []);
-
     const nuevoIngreso = {
       id: crypto.randomUUID(),
       monto: Number(monto),
@@ -31,28 +36,18 @@ class Ingreso {
       frecuencia,
       descripcion,
     };
-
     ingresos.push(nuevoIngreso);
     Almacenamiento.set("ingresos", ingresos);
   }
 
   static calcularMontoTotal() {
     const ingresos = Almacenamiento.get("ingresos", []);
-    let montoTotal = 0;
-    ingresos.forEach((unIngreso) => {
-      montoTotal += unIngreso.monto;
-    });
-    return montoTotal;
+    return ingresos.reduce((total, unIngreso) => total + unIngreso.monto, 0);
   }
 
   static darTodosLosIngresos() {
     const ingresos = Almacenamiento.get("ingresos", []);
-    // CORRECCIÓN: Se cambió "ingresos" a "ingreso" (en singular)
-    const tipoIngresos = ingresos.map((item) => ({
-      ...item,
-      tipo: "ingreso",
-    }));
-    return tipoIngresos;
+    return ingresos.map((item) => ({ ...item, tipo: "ingreso" }));
   }
 
   static eliminar(id) {
@@ -63,36 +58,28 @@ class Ingreso {
 }
 
 class Gasto {
-  static guardarGasto(monto, categoria, fecha, frecuencia, descripcion) {
+  static guardarGasto(monto, categoria, fecha, metodoPago, descripcion) {
     const gastos = Almacenamiento.get("gastos", []);
-
     const nuevoGasto = {
       id: crypto.randomUUID(),
       monto: Number(monto),
       categoria,
       fecha,
-      frecuencia,
+      metodoPago,
       descripcion,
     };
-
     gastos.push(nuevoGasto);
     Almacenamiento.set("gastos", gastos);
   }
 
   static calcularMontoTotal() {
     const gastos = Almacenamiento.get("gastos", []);
-    let gastoTotal = 0;
-    gastos.forEach((unGasto) => {
-      gastoTotal += unGasto.monto;
-    });
-    return gastoTotal;
+    return gastos.reduce((total, unGasto) => total + unGasto.monto, 0);
   }
 
   static darTodosLosGastos() {
     const gastos = Almacenamiento.get("gastos", []);
-    // CORRECCIÓN: Se cambió "gastos" a "gasto" (en singular)
-    const tipoGastos = gastos.map((item) => ({ ...item, tipo: "gasto" }));
-    return tipoGastos;
+    return gastos.map((item) => ({ ...item, tipo: "gasto" }));
   }
 
   static eliminar(id) {
@@ -112,78 +99,277 @@ class Meta {
   }
 }
 
-// EVENTOS
-function inicializarEventosHistorial() {
-  const selectFiltro = document.getElementById("filtro-tipo");
-  const cuerpoTabla = document.getElementById("tabla-historial-body");
+class DashboardServicio {
+  static obtenerDatosDashboard() {
+    const montoIngresos = Ingreso.calcularMontoTotal();
+    const montoGastos = Gasto.calcularMontoTotal();
+    const balance = montoIngresos - montoGastos;
+    const metaObjetivo = Meta.obtenerMeta();
+    const ahorroActual = Math.max(0, balance);
+    const porcentaje =
+      metaObjetivo > 0 ? (ahorroActual / metaObjetivo) * 100 : 0;
 
-  if (selectFiltro) {
-    // CORRECCIÓN: Evento "change" vinculado de forma reactiva al select
-    selectFiltro.addEventListener("change", () => {
-      iniciarModuloHistoria();
-    });
+    return {
+      montoIngresos,
+      montoGastos,
+      balance,
+      metaObjetivo,
+      ahorroActual,
+      porcentaje,
+    };
   }
+}
 
-  if (cuerpoTabla) {
-    // Delegación de eventos para los botones de eliminar dentro de la tabla
-    cuerpoTabla.addEventListener("click", (e) => {
-      const botonEliminar = e.target.closest("button[data-id]");
-      if (!botonEliminar) return;
+class ReporteServicio {
+  static obtenerResumenPeriodo(periodo) {
+    const transacciones = filtrarDistribucion(periodo);
+    const gastos = transacciones.filter((t) => t.tipo === "gasto");
+    const ingresos = transacciones.filter((t) => t.tipo === "ingreso");
 
-      const id = botonEliminar.getAttribute("data-id");
-      const tipo = botonEliminar.getAttribute("data-tipo");
+    const totalGastos = gastos.reduce((acc, g) => acc + g.monto, 0);
+    const totalIngresos = ingresos.reduce((acc, i) => acc + i.monto, 0);
 
-      if (tipo === "ingreso") {
-        Ingreso.eliminar(id);
-      } else if (tipo === "gasto") {
-        Gasto.eliminar(id);
+    let dias = 30;
+    if (periodo === "este-mes") dias = new Date().getDate();
+    else if (periodo === "anio-actual") dias = 365;
+
+    const promedioDiario = dias > 0 ? totalGastos / dias : 0;
+
+    let tasaAhorro = 0;
+    if (totalIngresos > 0) {
+      tasaAhorro = Math.max(
+        0,
+        ((totalIngresos - totalGastos) / totalIngresos) * 100,
+      );
+    }
+
+    const categoriasGastos = {};
+    gastos.forEach((g) => {
+      categoriasGastos[g.categoria] =
+        (categoriasGastos[g.categoria] || 0) + g.monto;
+    });
+
+    let categoriaMayor = "Sin gastos";
+    let maxMonto = 0;
+    for (const [cat, monto] of Object.entries(categoriasGastos)) {
+      if (monto > maxMonto) {
+        maxMonto = monto;
+        categoriaMayor = cat;
       }
+    }
 
-      // Refrescamos la tabla tras eliminar
-      iniciarModuloHistoria();
-    });
+    return {
+      promedioDiario,
+      tasaAhorro,
+      categoriaMayor,
+      totalGastos,
+      categoriasGastos,
+    };
   }
 }
 
-function inicializarEventosReportes() {
-  const filtroPeriodo = document.getElementById("filtro-periodo");
-  if (filtroPeriodo) {
-    filtroPeriodo.addEventListener("change", () => {
-      iniciarModuloReportes();
-    });
+// ==========================================
+// 3. FUNCIONES AUXILIARES Y DE FILTRADO
+// ==========================================
+
+const validadores = {
+  montoPositivo: (valor) => Number.isFinite(Number(valor)) && Number(valor) > 0,
+  numeroNoNegativo: (valor) =>
+    valor === "" || (Number.isFinite(Number(valor)) && Number(valor) >= 0),
+  enteroNoNegativo: (valor) =>
+    valor === "" || (Number.isInteger(Number(valor)) && Number(valor) >= 0),
+  requerido: (valor) => String(valor ?? "").trim() !== "",
+  fecha: (valor) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(valor)) return false;
+    const fecha = new Date(`${valor}T00:00:00`);
+    const [anio, mes, dia] = valor.split("-").map(Number);
+    return (
+      !Number.isNaN(fecha.getTime()) &&
+      fecha.getFullYear() === anio &&
+      fecha.getMonth() + 1 === mes &&
+      fecha.getDate() === dia
+    );
+  },
+  fechaAnterior: (valor) => {
+    if (!validadores.fecha(valor)) return false;
+    const fecha = new Date(`${valor}T00:00:00`);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    return fecha <= hoy;
+  },
+  unoDe: (opciones) => (valor) => opciones.includes(valor),
+};
+
+const reglasMeta = {
+  monto: {
+    validar: validadores.montoPositivo,
+    mensaje: "La meta debe ser mayor que cero.",
+  },
+};
+
+const reglasIngreso = {
+  monto: [
+    { validar: validadores.requerido, mensaje: "El monto es obligatorio." },
+    {
+      validar: validadores.montoPositivo,
+      mensaje: "El monto debe ser mayor que cero.",
+    },
+  ],
+  categoria: [
+    { validar: validadores.requerido, mensaje: "La categoría es obligatoria." },
+    {
+      validar: validadores.unoDe([
+        "salario",
+        "freelance",
+        "inversiones",
+        "ventas",
+        "otros",
+      ]),
+      mensaje: "Seleccioná una categoría válida.",
+    },
+  ],
+  fecha: [
+    { validar: validadores.requerido, mensaje: "La fecha es obligatoria." },
+    { validar: validadores.fecha, mensaje: "Ingresá una fecha válida." },
+    {
+      validar: validadores.fechaAnterior,
+      mensaje: "Ingresá una fecha anterior o actual.",
+    },
+  ],
+  frecuencia: [
+    {
+      validar: validadores.requerido,
+      mensaje: "La frecuencia es obligatoria.",
+    },
+    {
+      validar: validadores.unoDe(["puntual", "mensual", "quincenal"]),
+      mensaje: "Seleccioná una frecuencia válida.",
+    },
+  ],
+};
+
+const reglasGasto = {
+  monto: {
+    validar: validadores.montoPositivo,
+    mensaje: "El monto debe ser mayor que cero.",
+  },
+  categoria: {
+    validar: validadores.unoDe([
+      "alimentacion",
+      "vivienda",
+      "transporte",
+      "salud",
+      "entretenimiento",
+      "suscripciones",
+      "educacion",
+      "otros",
+    ]),
+    mensaje: "Seleccioná una categoría válida.",
+  },
+  fecha: {
+    validar: validadores.fecha,
+    mensaje: "Ingresá una fecha válida.",
+    validar: validadores.fechaAnterior,
+    mensaje: "Ingresá una fecha anterior o actual.",
+  },
+  metodoPago: {
+    validar: validadores.unoDe([
+      "debito",
+      "credito",
+      "efectivo",
+      "transferencia",
+    ]),
+    mensaje: "Seleccioná un método de pago válido.",
+  },
+};
+
+const reglasSimulador = {
+  montoInicial: [
+    {
+      validar: validadores.requerido,
+      mensaje: "El monto inicial es obligatorio.",
+    },
+    {
+      validar: validadores.numeroNoNegativo,
+      mensaje: "El monto inicial no puede ser negativo.",
+    },
+  ],
+  aporteMensual: {
+    validar: validadores.numeroNoNegativo,
+    mensaje: "El aporte mensual no puede ser negativo.",
+  },
+  tasaAnual: [
+    {
+      validar: validadores.requerido,
+      mensaje: "La tasa de interés es obligatoria.",
+    },
+    {
+      validar: validadores.numeroNoNegativo,
+      mensaje: "La tasa no puede ser negativa.",
+    },
+  ],
+  plazoMeses: [
+    { validar: validadores.requerido, mensaje: "El plazo es obligatorio." },
+    {
+      validar: validadores.enteroNoNegativo,
+      mensaje: "El plazo debe ser un número entero igual o mayor que cero.",
+    },
+  ],
+};
+
+function validarDatos(datos, reglas) {
+  const errores = {};
+
+  for (const [campo, reglasCampo] of Object.entries(reglas)) {
+    const listaReglas = Array.isArray(reglasCampo)
+      ? reglasCampo
+      : [reglasCampo];
+
+    for (const regla of listaReglas) {
+      if (typeof regla.validar === "function" && !regla.validar(datos[campo])) {
+        errores[campo] = regla.mensaje;
+        break;
+      }
+    }
   }
+
+  return {
+    valido: Object.keys(errores).length === 0,
+    errores,
+  };
 }
 
-// FUNCIONES AUXILIARES
+function notificarErroresValidacion(resultado, formulario) {
+  formulario.querySelectorAll("[data-error-for]").forEach((mensaje) => {
+    mensaje.textContent = resultado.errores[mensaje.dataset.errorFor] || "";
+  });
+
+  return resultado.valido;
+}
 
 function establecerFechaActual() {
-  const objFecha = new Date();
-  return objFecha.toLocaleDateString("es-AR");
+  return new Date().toLocaleDateString("es-AR");
 }
 
-function filtarHistoria(criterio) {
-  const ingresos = Ingreso.darTodosLosIngresos();
-  const gastos = Gasto.darTodosLosGastos();
-
-  let transacciones = [...ingresos, ...gastos];
+function filtrarHistoria(criterio) {
+  const transacciones = [
+    ...Ingreso.darTodosLosIngresos(),
+    ...Gasto.darTodosLosGastos(),
+  ];
   transacciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
-  let resultado = transacciones;
-
-  if (criterio === "ingreso") {
-    resultado = transacciones.filter((t) => t.tipo === "ingreso");
-  } else if (criterio === "gasto") {
-    resultado = transacciones.filter((t) => t.tipo === "gasto");
-  }
-
-  return resultado;
+  if (criterio === "ingreso")
+    return transacciones.filter((t) => t.tipo === "ingreso");
+  if (criterio === "gasto")
+    return transacciones.filter((t) => t.tipo === "gasto");
+  return transacciones;
 }
 
 function filtrarDistribucion(periodo) {
-  const ingresos = Ingreso.darTodosLosIngresos();
-  const gastos = Gasto.darTodosLosGastos();
-  const transacciones = [...ingresos, ...gastos];
-
+  const transacciones = [
+    ...Ingreso.darTodosLosIngresos(),
+    ...Gasto.darTodosLosGastos(),
+  ];
   const hoy = new Date();
   const anioActual = hoy.getFullYear();
   const mesActual = hoy.getMonth();
@@ -196,9 +382,9 @@ function filtrarDistribucion(periodo) {
     const anioT = fechaT.getFullYear();
     const mesT = fechaT.getMonth();
 
-    if (periodo === "este-mes") {
+    if (periodo === "este-mes")
       return anioT === anioActual && mesT === mesActual;
-    } else if (periodo === "mes-anterior") {
+    if (periodo === "mes-anterior") {
       let mesAnterior = mesActual - 1;
       let anioAnterior = anioActual;
       if (mesAnterior < 0) {
@@ -206,22 +392,154 @@ function filtrarDistribucion(periodo) {
         anioAnterior--;
       }
       return anioT === anioAnterior && mesT === mesAnterior;
-    } else if (periodo === "ultimo-trimestre") {
+    }
+    if (periodo === "ultimo-trimestre") {
       const diffMeses = (anioActual - anioT) * 12 + (mesActual - mesT);
       return diffMeses >= 0 && diffMeses < 3;
-    } else if (periodo === "anio-actual") {
-      return anioT === anioActual;
     }
+    if (periodo === "anio-actual") return anioT === anioActual;
     return true;
   });
 }
 
-function obtenerPorcentaje(meta, montoActual) {
-  if (meta <= 0) return 0;
-  return (montoActual / meta) * 100;
+// ==========================================
+// 4. CAPA DE VISTA / RENDERIZADO
+// ==========================================
+
+function renderizarDashboard(datos) {
+  const fechaActual = document.getElementById("fecha");
+  if (fechaActual) fechaActual.textContent = establecerFechaActual();
+
+  const totalIngresosEl = document.getElementById("total-ingresos");
+  const totalGastosEl = document.getElementById("total-gastos");
+  const balanceTotalEl = document.getElementById("balance-total");
+
+  if (totalIngresosEl)
+    totalIngresosEl.textContent = datos.montoIngresos.toFixed(2);
+  if (totalGastosEl) totalGastosEl.textContent = datos.montoGastos.toFixed(2);
+  if (balanceTotalEl) {
+    balanceTotalEl.textContent = datos.balance.toFixed(2);
+    balanceTotalEl.className = `monto ${datos.balance >= 0 ? "positivo" : "negativo"}`;
+  }
+
+  const spanPorcentaje = document.getElementById("meta-porcentaje");
+  const spanActual = document.getElementById("meta-actual");
+  const spanObjetivo = document.getElementById("meta-objetivo");
+  const barraMeta = document.getElementById("meta-barra");
+
+  if (spanPorcentaje)
+    spanPorcentaje.textContent = `${datos.porcentaje.toFixed(0)}%`;
+  if (spanActual) spanActual.textContent = datos.ahorroActual.toFixed(2);
+  if (spanObjetivo) spanObjetivo.textContent = datos.metaObjetivo.toFixed(2);
+  if (barraMeta) barraMeta.value = Math.min(datos.porcentaje, 100);
 }
 
-// MÓDULOS
+function renderizarHistorial(transacciones) {
+  const cuerpoTabla = document.getElementById("tabla-historial-body");
+  if (!cuerpoTabla) return;
+
+  cuerpoTabla.innerHTML = "";
+
+  if (transacciones.length === 0) {
+    cuerpoTabla.innerHTML = `<tr><td colspan="6" style="text-align: center;">No hay movimientos registrados.</td></tr>`;
+    return;
+  }
+
+  transacciones.forEach((item) => {
+    const fila = document.createElement("tr");
+    const esIngreso = item.tipo === "ingreso";
+    const signo = esIngreso ? "+" : "-";
+    const claseBadge = esIngreso ? "ingreso" : "gasto";
+    const claseMonto = esIngreso ? "positivo" : "negativo";
+
+    fila.innerHTML = `
+      <td>${item.fecha}</td>
+      <td><span class="badge ${claseBadge}">${item.tipo.toUpperCase()}</span></td>
+      <td>${item.categoria}</td>
+      <td>${item.descripcion || "-"}</td>
+      <td class="${claseMonto}">${signo}$${Number(item.monto).toFixed(2)}</td>
+      <td>
+        <button type="button" class="btn btn-secundario" data-id="${item.id}" data-tipo="${item.tipo}" title="Eliminar">🗑️</button>
+      </td>
+    `;
+    cuerpoTabla.appendChild(fila);
+  });
+}
+
+function renderizarReportes(resumen) {
+  const elPromedioDiario = document.getElementById("reporte-promedio-diario");
+  const elTasaAhorro = document.getElementById("reporte-tasa-ahorro");
+  const elCategoriaTop = document.getElementById("reporte-categoria-top");
+  const listaDesglose = document.getElementById("lista-desglose");
+
+  if (elPromedioDiario)
+    elPromedioDiario.textContent = `$${resumen.promedioDiario.toFixed(2)}`;
+  if (elTasaAhorro)
+    elTasaAhorro.textContent = `${resumen.tasaAhorro.toFixed(1)}%`;
+  if (elCategoriaTop) elCategoriaTop.textContent = resumen.categoriaMayor;
+
+  if (!listaDesglose) return;
+  listaDesglose.innerHTML = "";
+
+  const categoriasOrdenadas = Object.entries(resumen.categoriasGastos).sort(
+    (a, b) => b[1] - a[1],
+  );
+
+  if (categoriasOrdenadas.length === 0) {
+    listaDesglose.innerHTML = `<li style="text-align: center; padding: 1rem; color: #6b7280;">No hay datos de gastos para mostrar en este período.</li>`;
+    return;
+  }
+
+  categoriasOrdenadas.forEach(([cat, monto]) => {
+    const porcentaje =
+      resumen.totalGastos > 0 ? (monto / resumen.totalGastos) * 100 : 0;
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <div>
+        <span>${cat}</span>
+        <span>$${monto.toFixed(2)} (${porcentaje.toFixed(0)}%)</span>
+      </div>
+      <progress value="${porcentaje.toFixed(0)}" max="100"></progress>
+    `;
+    listaDesglose.appendChild(li);
+  });
+}
+
+// ==========================================
+// 5. CAPA DE CONTROLADORES Y EVENTOS
+// ==========================================
+
+function iniciarModuloDashboard() {
+  const datosIniciales = DashboardServicio.obtenerDatosDashboard();
+  renderizarDashboard(datosIniciales);
+
+  const formularioMeta = document.getElementById("form-meta");
+  if (formularioMeta) {
+    formularioMeta.addEventListener("submit", function (evento) {
+      evento.preventDefault();
+      const inputNuevaMeta = document.getElementById("input-nueva-meta");
+      const datos = { monto: inputNuevaMeta.value };
+      const resultado = validarDatos(datos, reglasMeta);
+
+      if (!notificarErroresValidacion(resultado, formularioMeta)) return;
+
+      Meta.guardarMeta(Number(datos.monto));
+      renderizarDashboard(DashboardServicio.obtenerDatosDashboard());
+
+      alert("¡Meta guardada correctamente!");
+      formularioMeta.reset();
+    });
+  }
+
+  const btnLimpiarMeta = document.getElementById("btn-limpiar-meta");
+  if (btnLimpiarMeta) {
+    btnLimpiarMeta.addEventListener("click", function () {
+      Almacenamiento.remove("meta");
+      renderizarDashboard(DashboardServicio.obtenerDatosDashboard());
+      alert("¡La meta ha sido restablecida!");
+    });
+  }
+}
 
 function iniciarModuloIngresos() {
   const formulario = document.getElementById("form-ingreso");
@@ -229,13 +547,23 @@ function iniciarModuloIngresos() {
 
   formulario.addEventListener("submit", function (evento) {
     evento.preventDefault();
-    const monto = document.getElementById("monto").value;
-    const categoria = document.getElementById("categoria").value;
-    const fecha = document.getElementById("fecha").value;
-    const frecuencia = document.getElementById("frecuencia").value;
-    const descripcion = document.getElementById("descripcion").value;
+    const datos = {
+      monto: document.getElementById("monto").value,
+      categoria: document.getElementById("categoria").value,
+      fecha: document.getElementById("fecha").value,
+      frecuencia: document.getElementById("frecuencia").value,
+      descripcion: document.getElementById("descripcion").value,
+    };
+    const resultado = validarDatos(datos, reglasIngreso);
+    if (!notificarErroresValidacion(resultado, formulario)) return;
 
-    Ingreso.guardarIngreso(monto, categoria, fecha, frecuencia, descripcion);
+    Ingreso.guardarIngreso(
+      datos.monto,
+      datos.categoria,
+      datos.fecha,
+      datos.frecuencia,
+      datos.descripcion,
+    );
     alert("¡Ingreso guardado correctamente!");
     formulario.reset();
   });
@@ -247,110 +575,26 @@ function iniciarModuloGastos() {
 
   formulario.addEventListener("submit", function (evento) {
     evento.preventDefault();
-    const monto = document.getElementById("monto").value;
-    const categoria = document.getElementById("categoria").value;
-    const metodoPago = document.getElementById("metodo-pago").value;
-    const fecha = document.getElementById("fecha").value;
-    const descripcion = document.getElementById("descripcion").value;
+    const datos = {
+      monto: document.getElementById("monto").value,
+      categoria: document.getElementById("categoria").value,
+      fecha: document.getElementById("fecha").value,
+      metodoPago: document.getElementById("metodo-pago").value,
+      descripcion: document.getElementById("descripcion").value,
+    };
+    const resultado = validarDatos(datos, reglasGasto);
+    if (!notificarErroresValidacion(resultado, formulario)) return;
 
-    Gasto.guardarGasto(monto, categoria, fecha, metodoPago, descripcion);
+    Gasto.guardarGasto(
+      datos.monto,
+      datos.categoria,
+      datos.fecha,
+      datos.metodoPago,
+      datos.descripcion,
+    );
     alert("¡Gasto guardado correctamente!");
     formulario.reset();
   });
-}
-
-function iniciarModuloDashboard() {
-  // 1. Mostrar fecha actual
-  const fechaEl = document.getElementById("fecha");
-  if (fechaEl) fechaEl.textContent = establecerFechaActual();
-
-  // 2. Obtener referencias del DOM (elementos <p>)
-  const totalIngresosEl = document.getElementById("total-ingresos");
-  const totalGastosEl = document.getElementById("total-gastos");
-  const balanceTotalEl = document.getElementById("balance-total");
-
-  // 3. Calcular montos desde la lógica de clases
-  const montoIngresos = Ingreso.calcularMontoTotal();
-  const montoGastos = Gasto.calcularMontoTotal();
-  const balance = montoIngresos - montoGastos;
-
-  // 4. Renderizar montos en las tarjetas KPI
-  if (totalIngresosEl) totalIngresosEl.textContent = montoIngresos.toFixed(2);
-  if (totalGastosEl) totalGastosEl.textContent = montoGastos.toFixed(2);
-  if (balanceTotalEl) {
-    balanceTotalEl.textContent = balance.toFixed(2);
-    // Cambiar dinámicamente la clase según si el balance es positivo o negativo
-    balanceTotalEl.className = `monto ${balance >= 0 ? "positivo" : "negativo"}`;
-  }
-
-  // 5. Renderizar progreso de la Meta de Ahorro
-  const metaObjetivo = Meta.obtenerMeta();
-  // El ahorro real equivale al balance (Ingresos - Gastos)
-  const ahorroActual = Math.max(0, balance);
-  const porcentaje = obtenerPorcentaje(metaObjetivo, ahorroActual);
-
-  const spanPorcentaje = document.getElementById("meta-porcentaje");
-  const spanActual = document.getElementById("meta-actual");
-  const spanObjetivo = document.getElementById("meta-objetivo");
-  const barraMeta = document.getElementById("meta-barra");
-
-  if (spanPorcentaje) spanPorcentaje.textContent = `${porcentaje.toFixed(0)}%`;
-  if (spanActual) spanActual.textContent = ahorroActual.toFixed(2);
-  if (spanObjetivo) spanObjetivo.textContent = metaObjetivo.toFixed(2);
-  if (barraMeta) barraMeta.value = Math.min(porcentaje, 100);
-
-  // 6. Asignar evento al formulario de nueva meta (#form-meta)
-  const formularioMeta = document.getElementById("form-meta");
-  if (!formularioMeta) return;
-
-  formularioMeta.onsubmit = function (evento) {
-    evento.preventDefault();
-    const inputNuevaMeta = document.getElementById("input-nueva-meta");
-    const nuevoMontoMeta = Number(inputNuevaMeta.value);
-
-    if (isNaN(nuevoMontoMeta) || nuevoMontoMeta <= 0) return;
-
-    // Guardar y recalcular
-    Meta.guardarMeta(nuevoMontoMeta);
-    const nuevaMeta = Meta.obtenerMeta();
-    const nuevoPorcentaje = obtenerPorcentaje(nuevaMeta, ahorroActual);
-
-    // Actualizar vista
-    if (spanPorcentaje)
-      spanPorcentaje.textContent = `${nuevoPorcentaje.toFixed(0)}%`;
-    if (spanActual) spanActual.textContent = ahorroActual.toFixed(2);
-    if (spanObjetivo) spanObjetivo.textContent = nuevaMeta.toFixed(2);
-    if (barraMeta) barraMeta.value = Math.min(nuevoPorcentaje, 100);
-
-    alert("¡Meta guardada correctamente!");
-    formularioMeta.reset();
-  };
-  // Agrega este bloque dentro de iniciarModuloDashboard():
-
-  const btnLimpiarMeta = document.getElementById("btn-limpiar-meta");
-
-  if (btnLimpiarMeta) {
-    btnLimpiarMeta.addEventListener("click", function () {
-      // 1. Borrar la clave de localStorage
-      Almacenamiento.remove("meta"); // Usa el método static de tu clase Almacenamiento
-
-      // 2. Recalcular los valores visuales
-      const metaObjetivo = Meta.obtenerMeta(); // Retornará 0 por defecto
-      const montoIngresos = Ingreso.calcularMontoTotal();
-      const montoGastos = Gasto.calcularMontoTotal();
-      const ahorroActual = Math.max(0, montoIngresos - montoGastos);
-      const porcentaje = obtenerPorcentaje(metaObjetivo, ahorroActual);
-
-      // 3. Actualizar la interfaz
-      if (spanPorcentaje)
-        spanPorcentaje.textContent = `${porcentaje.toFixed(0)}%`;
-      if (spanActual) spanActual.textContent = ahorroActual.toFixed(2);
-      if (spanObjetivo) spanObjetivo.textContent = metaObjetivo.toFixed(2);
-      if (barraMeta) barraMeta.value = Math.min(porcentaje, 100);
-
-      alert("¡La meta ha sido restablecida!");
-    });
-  }
 }
 
 function iniciarModuloSimulador() {
@@ -359,21 +603,24 @@ function iniciarModuloSimulador() {
 
   formulario.addEventListener("submit", function (evento) {
     evento.preventDefault();
+    const datos = {
+      montoInicial: document.getElementById("sim-monto-inicial").value,
+      aporteMensual: document.getElementById("sim-aporte-mensual").value,
+      tasaAnual: document.getElementById("sim-interes").value,
+      plazoMeses: document.getElementById("sim-plazo").value,
+    };
+    const resultado = validarDatos(datos, reglasSimulador);
+    if (!notificarErroresValidacion(resultado, formulario)) return;
 
-    // 1. Obtener valores de los inputs
-    const montoInicial =
-      Number(document.getElementById("sim-monto-inicial").value) || 0;
-    const aporteMensual =
-      Number(document.getElementById("sim-aporte-mensual").value) || 0;
-    const tasaAnual = Number(document.getElementById("sim-interes").value) || 0;
-    const plazoMeses = Number(document.getElementById("sim-plazo").value) || 0;
+    const montoInicial = Number(datos.montoInicial) || 0;
+    const aporteMensual = Number(datos.aporteMensual) || 0;
+    const tasaAnual = Number(datos.tasaAnual) || 0;
+    const plazoMeses = Number(datos.plazoMeses) || 0;
 
-    // 2. Calcular tasa mensual y total depositado
     const tasaMensual = tasaAnual / 100 / 12;
     let saldoActual = montoInicial;
     let totalDepositado = montoInicial + aporteMensual * plazoMeses;
 
-    // 3. Simular mes a mes el crecimiento por interés compuesto
     for (let i = 0; i < plazoMeses; i++) {
       saldoActual = saldoActual * (1 + tasaMensual) + aporteMensual;
     }
@@ -385,7 +632,6 @@ function iniciarModuloSimulador() {
 
     const interesesGenerados = Math.max(0, saldoActual - totalDepositado);
 
-    // 4. Mostrar resultados en las tarjetas KPI
     const elDepositado = document.getElementById("sim-resultado-depositado");
     const elIntereses = document.getElementById("sim-resultado-intereses");
     const elTotal = document.getElementById("sim-resultado-total");
@@ -400,135 +646,60 @@ function iniciarModuloSimulador() {
 
 function iniciarModuloHistoria() {
   const selectFiltro = document.getElementById("filtro-tipo");
-  const filtro = selectFiltro ? selectFiltro.value : "todos";
   const cuerpoTabla = document.getElementById("tabla-historial-body");
 
-  if (!cuerpoTabla) return;
-  cuerpoTabla.innerHTML = "";
+  const filtroActual = selectFiltro ? selectFiltro.value : "todos";
+  renderizarHistorial(filtrarHistoria(filtroActual));
 
-  const transacciones = filtarHistoria(filtro);
-
-  if (transacciones.length === 0) {
-    // CORRECCIÓN: Colspan ajustado a 6 para alinearse con los <th> del HTML
-    cuerpoTabla.innerHTML = `<tr><td colspan="6" style="text-align: center;">No hay movimientos registrados.</td></tr>`;
-    return;
+  if (selectFiltro && !selectFiltro.dataset.listener) {
+    selectFiltro.dataset.listener = "true";
+    selectFiltro.addEventListener("change", () => {
+      renderizarHistorial(filtrarHistoria(selectFiltro.value));
+    });
   }
 
-  transacciones.forEach((item) => {
-    const fila = document.createElement("tr");
-    const esIngreso = item.tipo === "ingreso";
-    const signo = esIngreso ? "+" : "-";
-    const claseBadge = esIngreso ? "ingreso" : "gasto";
-    const claseMonto = esIngreso ? "positivo" : "negativo";
+  if (cuerpoTabla && !cuerpoTabla.dataset.listener) {
+    cuerpoTabla.dataset.listener = "true";
+    cuerpoTabla.addEventListener("click", (e) => {
+      const botonEliminar = e.target.closest("button[data-id]");
+      if (!botonEliminar) return;
 
-    // CORRECCIÓN: Estructura de 6 columnas idéntica al orden de los <th> del HTML
-    fila.innerHTML = `
-      <td>${item.fecha}</td>
-      <td><span class="badge ${claseBadge}">${item.tipo.toUpperCase()}</span></td>
-      <td>${item.categoria}</td>
-      <td>${item.descripcion || "-"}</td>
-      <td class="${claseMonto}">${signo}$${Number(item.monto).toFixed(2)}</td>
-      <td>
-        <button type="button" class="btn btn-secundario" data-id="${item.id}" data-tipo="${item.tipo}" title="Eliminar">🗑️</button>
-      </td>
-    `;
+      const id = botonEliminar.getAttribute("data-id");
+      const tipo = botonEliminar.getAttribute("data-tipo");
 
-    cuerpoTabla.appendChild(fila);
-  });
-}
+      if (tipo === "ingreso") Ingreso.eliminar(id);
+      else if (tipo === "gasto") Gasto.eliminar(id);
 
-function iniciarModuloReportes() {
-  const filtroPeriodo = document.getElementById("filtro-periodo");
-  const periodo = filtroPeriodo ? filtroPeriodo.value : "este-mes";
-
-  const transaccionesPeriodo = filtrarDistribucion(periodo);
-  const gastosPeriodo = transaccionesPeriodo.filter((t) => t.tipo === "gasto");
-  const ingresosPeriodo = transaccionesPeriodo.filter(
-    (t) => t.tipo === "ingreso",
-  );
-
-  // Totales del período
-  const totalGastos = gastosPeriodo.reduce((acc, g) => acc + g.monto, 0);
-  const totalIngresos = ingresosPeriodo.reduce((acc, i) => acc + i.monto, 0);
-
-  // 1. Promedio de Gasto Diario
-  const elPromedioDiario = document.getElementById("reporte-promedio-diario");
-  let dias = 30;
-  if (periodo === "este-mes") {
-    dias = new Date().getDate(); // Días transcurridos del mes actual
-  } else if (periodo === "anio-actual") {
-    dias = 365;
-  }
-  const promedioDiario = dias > 0 ? totalGastos / dias : 0;
-  if (elPromedioDiario) {
-    elPromedioDiario.textContent = `$${promedioDiario.toFixed(2)}`;
-  }
-
-  // 2. Tasa de Ahorro (Porcentaje de ingresos que no se gastaron)
-  const elTasaAhorro = document.getElementById("reporte-tasa-ahorro");
-  let tasaAhorro = 0;
-  if (totalIngresos > 0) {
-    tasaAhorro = Math.max(
-      0,
-      ((totalIngresos - totalGastos) / totalIngresos) * 100,
-    );
-  }
-  if (elTasaAhorro) {
-    elTasaAhorro.textContent = `${tasaAhorro.toFixed(1)}%`;
-  }
-
-  // 3. Categoría de Mayor Gasto
-  const elCategoriaTop = document.getElementById("reporte-categoria-top");
-  const categoriasGastos = {};
-  gastosPeriodo.forEach((g) => {
-    categoriasGastos[g.categoria] =
-      (categoriasGastos[g.categoria] || 0) + g.monto;
-  });
-
-  let categoriaMayor = "Sin gastos";
-  let maxMonto = 0;
-  for (const [cat, monto] of Object.entries(categoriasGastos)) {
-    if (monto > maxMonto) {
-      maxMonto = monto;
-      categoriaMayor = cat;
-    }
-  }
-  if (elCategoriaTop) {
-    elCategoriaTop.textContent = categoriaMayor;
-  }
-
-  // 4. Distribución de Gastos por Categoría (Lista y barras de progreso)
-  const listaDesglose = document.getElementById("lista-desglose");
-  if (listaDesglose) {
-    listaDesglose.innerHTML = "";
-
-    if (gastosPeriodo.length === 0) {
-      listaDesglose.innerHTML = `<li style="text-align: center; padding: 1rem; color: #6b7280;">No hay datos de gastos para mostrar en este período.</li>`;
-      return;
-    }
-
-    const categoriasOrdenadas = Object.entries(categoriasGastos).sort(
-      (a, b) => b[1] - a[1],
-    );
-
-    categoriasOrdenadas.forEach(([cat, monto]) => {
-      const porcentaje = totalGastos > 0 ? (monto / totalGastos) * 100 : 0;
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <div>
-          <span>${cat}</span>
-          <span>$${monto.toFixed(2)} (${porcentaje.toFixed(0)}%)</span>
-        </div>
-        <progress value="${porcentaje.toFixed(0)}" max="100"></progress>
-      `;
-      listaDesglose.appendChild(li);
+      renderizarHistorial(
+        filtrarHistoria(selectFiltro ? selectFiltro.value : "todos"),
+      );
     });
   }
 }
 
+function iniciarModuloReportes() {
+  const filtroPeriodo = document.getElementById("filtro-periodo");
+
+  const actualizarReportes = () => {
+    const periodo = filtroPeriodo ? filtroPeriodo.value : "este-mes";
+    const resumen = ReporteServicio.obtenerResumenPeriodo(periodo);
+    renderizarReportes(resumen);
+  };
+
+  actualizarReportes();
+
+  if (filtroPeriodo && !filtroPeriodo.dataset.listener) {
+    filtroPeriodo.dataset.listener = "true";
+    filtroPeriodo.addEventListener("change", actualizarReportes);
+  }
+}
+
+// ==========================================
+// 6. ENRUTADOR GLOBAL
+// ==========================================
+
 function iniciarApp() {
   const paginaActiva = document.querySelector("a.activo");
-
   if (!paginaActiva) {
     console.log("La página no se encuentra activa");
     return;
@@ -550,13 +721,10 @@ function iniciarApp() {
       iniciarModuloSimulador();
       break;
     case "historial.html":
-      // CORRECCIÓN: Inicializamos tanto la tabla como los eventos de filtrado al cargar la vista de historial
       iniciarModuloHistoria();
-      inicializarEventosHistorial();
       break;
     case "reportes.html":
       iniciarModuloReportes();
-      inicializarEventosReportes();
       break;
     default:
       console.log("Página no encontrada");

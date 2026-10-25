@@ -1,74 +1,93 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/global.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/global.css" />
     <title>Registrar Ingreso - Finanzas</title>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <nav>
-            <a href="dashboard.html">DASHBOARD</a>
-            <a href="ingresos.html" class="activo">INGRESOS</a>
-            <a href="gastos.html">GASTOS</a>
-            <a href="simulador.html">SIMULADOR</a>
-            <a href="historial.html">HISTORIAL</a>
-            <a href="reportes.html">REPORTES</a>
-        </nav>
+      <nav>
+        <a href="dashboard.html">DASHBOARD</a>
+        <a href="ingresos.html" class="activo">INGRESOS</a>
+        <a href="gastos.html">GASTOS</a>
+        <a href="simulador.html">SIMULADOR</a>
+        <a href="historial.html">HISTORIAL</a>
+        <a href="reportes.html">REPORTES</a>
+      </nav>
     </header>
 
     <main>
-        <section>
-            <h1>Registrar Nuevo Ingreso</h1>
-            <p>Ingresa los detalles del monto recibido.</p>
+      <section>
+        <h1>Registrar Nuevo Ingreso</h1>
+        <p>Ingresa los detalles del monto recibido.</p>
 
-            <form id="form-ingreso">
-                <label>
-                    Monto ($)
-                    <input type="number" id="monto" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
-                </label>
+        <form id="form-ingreso">
+          <label>
+            Monto ($)
+            <input
+              type="number"
+              id="monto"
+              name="monto"
+              step="1"
+              placeholder="0.00"
+            />
+            <p class="error" data-error-for="monto" aria-live="polite"></p>
+          </label>
 
-                <label>
-                    Categoría / Fuente
-                    <select id="categoria" name="categoria" required>
-                        <option value="" disabled selected>Selecciona una opción</option>
-                        <option value="salario">Salario / Sueldo</option>
-                        <option value="freelance">Freelance / Trabajos independientes</option>
-                        <option value="inversiones">Inversiones / Rendimientos</option>
-                        <option value="ventas">Ventas</option>
-                        <option value="otros">Otros</option>
-                    </select>
-                </label>
+          <label>
+            Categoría / Fuente
+            <select id="categoria" name="categoria">
+              <option value="" disabled selected>Selecciona una opción</option>
+              <option value="salario">Salario / Sueldo</option>
+              <option value="freelance">
+                Freelance / Trabajos independientes
+              </option>
+              <option value="inversiones">Inversiones / Rendimientos</option>
+              <option value="ventas">Ventas</option>
+              <option value="otros">Otros</option>
+            </select>
+            <p class="error" data-error-for="categoria" aria-live="polite"></p>
+          </label>
 
-                <label>
-                    Fecha
-                    <input type="date" id="fecha" name="fecha" required>
-                </label>
+          <label>
+            Fecha
+            <input type="date" id="fecha" name="fecha" required />
+            <p class="error" data-error-for="fecha" aria-live="polite"></p>
+          </label>
 
-                <label>
-                    Frecuencia
-                    <select id="frecuencia" name="frecuencia">
-                        <option value="puntual">Puntual (Único)</option>
-                        <option value="mensual">Mensual</option>
-                        <option value="quincenal">Quincenal</option>
-                    </select>
-                </label>
+          <label>
+            Frecuencia
+            <select id="frecuencia" name="frecuencia">
+              <option value="puntual">Puntual (Único)</option>
+              <option value="mensual">Mensual</option>
+              <option value="quincenal">Quincenal</option>
+            </select>
+            <p class="error" data-error-for="frecuencia" aria-live="polite"></p>
+          </label>
 
-                <label class="full">
-                    Descripción / Nota
-                    <input type="text" id="descripcion" name="descripcion" placeholder="Ej: Bonificación de fin de mes">
-                </label>
+          <label class="full">
+            Descripción / Nota
+            <input
+              type="text"
+              id="descripcion"
+              name="descripcion"
+              placeholder="Ej: Bonificación de fin de mes"
+            />
+          </label>
 
-                <div class="acciones">
-                    <button type="submit" class="btn btn-positivo">Guardar Ingreso</button>
-                    <a href="dashboard.html" class="btn btn-secundario">Cancelar</a>
-                </div>
-            </form>
-        </section>
+          <div class="acciones">
+            <button type="submit" class="btn btn-positivo">
+              Guardar Ingreso
+            </button>
+            <a href="dashboard.html" class="btn btn-secundario">Cancelar</a>
+          </div>
+        </form>
+      </section>
     </main>
 
     <footer>Powered By Tybo</footer>
     <script src="/javascript/app.js"></script>
-</body>
+  </body>
 </html>

@@ -39,21 +39,33 @@
               placeholder="1000"
               value="1000"
             />
+            <p
+              class="error"
+              data-error-for="montoInicial"
+              aria-live="polite"
+            ></p>
           </label>
 
           <label>
             Aporte Mensual ($)
-            <input type="number" id="sim-aporte-mensual" placeholder="200" />
+            <input type="number" id="sim-aporte-mensual" value="0" />
+            <p
+              class="error"
+              data-error-for="aporteMensual"
+              aria-live="polite"
+            ></p>
           </label>
 
           <label>
             Tasa de Interés Anual (%)
             <input type="number" id="sim-interes" step="0.1" placeholder="5" />
+            <p class="error" data-error-for="tasaAnual" aria-live="polite"></p>
           </label>
 
           <label>
             Plazo (Meses)
             <input type="number" id="sim-plazo" placeholder="12" />
+            <p class="error" data-error-for="plazoMeses" aria-live="polite"></p>
           </label>
 
           <div class="acciones">

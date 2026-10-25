@@ -1,78 +1,97 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/global.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/global.css" />
     <title>Registrar Gasto - Finanzas</title>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <nav>
-            <a href="dashboard.html">DASHBOARD</a>
-            <a href="ingresos.html">INGRESOS</a>
-            <a href="gastos.html" class="activo">GASTOS</a>
-            <a href="simulador.html">SIMULADOR</a>
-            <a href="historial.html">HISTORIAL</a>
-            <a href="reportes.html">REPORTES</a>
-        </nav>
+      <nav>
+        <a href="dashboard.html">DASHBOARD</a>
+        <a href="ingresos.html">INGRESOS</a>
+        <a href="gastos.html" class="activo">GASTOS</a>
+        <a href="simulador.html">SIMULADOR</a>
+        <a href="historial.html">HISTORIAL</a>
+        <a href="reportes.html">REPORTES</a>
+      </nav>
     </header>
 
     <main>
-        <section>
-            <h1>Registrar Nuevo Gasto</h1>
-            <p>Ingresa los detalles de la salida de dinero.</p>
+      <section>
+        <h1>Registrar Nuevo Gasto</h1>
+        <p>Ingresa los detalles de la salida de dinero.</p>
 
-            <form id="form-gasto">
-                <label>
-                    Monto ($)
-                    <input type="number" id="monto" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
-                </label>
+        <form id="form-gasto">
+          <label>
+            Monto ($)
+            <input
+              type="number"
+              id="monto"
+              name="monto"
+              step="1"
+              placeholder="0.00"
+            />
+            <p class="error" data-error-for="monto" aria-live="polite"></p>
+          </label>
 
-                <label>
-                    Categoría
-                    <select id="categoria" name="categoria" required>
-                        <option value="" disabled selected>Selecciona una opción</option>
-                        <option value="alimentacion">Alimentación / Supermercado</option>
-                        <option value="vivienda">Vivienda / Servicios</option>
-                        <option value="transporte">Transporte / Combustible</option>
-                        <option value="salud">Salud / Farmacia</option>
-                        <option value="entretenimiento">Entretenimiento / Ocio</option>
-                        <option value="suscripciones">Suscripciones / Servicios streaming</option>
-                        <option value="educacion">Educación</option>
-                        <option value="otros">Otros gastos</option>
-                    </select>
-                </label>
+          <label>
+            Categoría
+            <select id="categoria" name="categoria" required>
+              <option value="" disabled selected>Selecciona una opción</option>
+              <option value="alimentacion">Alimentación / Supermercado</option>
+              <option value="vivienda">Vivienda / Servicios</option>
+              <option value="transporte">Transporte / Combustible</option>
+              <option value="salud">Salud / Farmacia</option>
+              <option value="entretenimiento">Entretenimiento / Ocio</option>
+              <option value="suscripciones">
+                Suscripciones / Servicios streaming
+              </option>
+              <option value="educacion">Educación</option>
+              <option value="otros">Otros gastos</option>
+            </select>
+            <p class="error" data-error-for="categoria" aria-live="polite"></p>
+          </label>
 
-                <label>
-                    Método de Pago
-                    <select id="metodo-pago" name="metodo-pago" required>
-                        <option value="debito">Tarjeta de Débito</option>
-                        <option value="credito">Tarjeta de Crédito</option>
-                        <option value="efectivo">Efectivo</option>
-                        <option value="transferencia">Transferencia</option>
-                    </select>
-                </label>
+          <label>
+            Método de Pago
+            <select id="metodo-pago" name="metodo-pago" required>
+              <option value="debito">Tarjeta de Débito</option>
+              <option value="credito">Tarjeta de Crédito</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="transferencia">Transferencia</option>
+            </select>
+            <p class="error" data-error-for="metodoPago" aria-live="polite"></p>
+          </label>
 
-                <label>
-                    Fecha
-                    <input type="date" id="fecha" name="fecha" required>
-                </label>
+          <label>
+            Fecha
+            <input type="date" id="fecha" name="fecha" required />
+            <p class="error" data-error-for="fecha" aria-live="polite"></p>
+          </label>
 
-                <label class="full">
-                    Descripción / Nota
-                    <input type="text" id="descripcion" name="descripcion" placeholder="Ej: Compra semanal en el supermercado">
-                </label>
+          <label class="full">
+            Descripción / Nota
+            <input
+              type="text"
+              id="descripcion"
+              name="descripcion"
+              placeholder="Ej: Compra semanal en el supermercado"
+            />
+          </label>
 
-                <div class="acciones">
-                    <button type="submit" class="btn btn-negativo">Guardar Gasto</button>
-                    <a href="dashboard.html" class="btn btn-secundario">Cancelar</a>
-                </div>
-            </form>
-        </section>
+          <div class="acciones">
+            <button type="submit" class="btn btn-negativo">
+              Guardar Gasto
+            </button>
+            <a href="dashboard.html" class="btn btn-secundario">Cancelar</a>
+          </div>
+        </form>
+      </section>
     </main>
 
     <footer>Powered By Tybo</footer>
     <script src="/javascript/app.js"></script>
-</body>
+  </body>
 </html>

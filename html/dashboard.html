@@ -63,10 +63,11 @@
                 type="number"
                 id="input-nueva-meta"
                 step="1"
-                min="1"
                 placeholder="Ej: 1500"
               />
             </label>
+            <br />
+            <p class="error" data-error-for="monto" aria-live="polite"></p>
             <div class="acciones">
               <button type="submit" class="btn btn-primario">
                 Guardar Meta
@@ -84,11 +85,6 @@
         </article>
       </section>
       <!-- BLOQUE 4: Accesos Rápidos -->
-      <section class="acciones">
-        <a href="ingresos.html" class="btn btn-positivo">+ Registrar Ingreso</a>
-        <a href="gastos.html" class="btn btn-negativo">- Registrar Gasto</a>
-        <a href="simulador.html" class="btn btn-primario">Proyectar Ahorro</a>
-      </section>
       <script src="/javascript/app.js"></script>
     </main>
     <footer>Powered By Tybo</footer>
