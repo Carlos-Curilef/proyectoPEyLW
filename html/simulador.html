@@ -33,12 +33,7 @@
         <form id="form-simulador">
           <label>
             Monto Inicial ($)
-            <input
-              type="number"
-              id="sim-monto-inicial"
-              placeholder="1000"
-              value="1000"
-            />
+            <input type="number" id="sim-monto-inicial" value="0" />
             <p
               class="error"
               data-error-for="montoInicial"
@@ -58,13 +53,19 @@
 
           <label>
             Tasa de Interés Anual (%)
-            <input type="number" id="sim-interes" step="0.1" placeholder="5" />
+            <input
+              type="number"
+              id="sim-interes"
+              step="0.1"
+              placeholder="5"
+              value="0"
+            />
             <p class="error" data-error-for="tasaAnual" aria-live="polite"></p>
           </label>
 
           <label>
             Plazo (Meses)
-            <input type="number" id="sim-plazo" placeholder="12" />
+            <input type="number" id="sim-plazo" placeholder="12" value="0" />
             <p class="error" data-error-for="plazoMeses" aria-live="polite"></p>
           </label>
 
@@ -97,7 +98,41 @@
       </section>
     </main>
 
-    <footer>Powered By Tybo</footer>
+    <footer class="pie-sitio">
+      <p>
+        Diseñado por
+        <strong
+          ><a href="https://github.com/Carlos-Curilef">Cafecito</a></strong
+        >
+      </p>
+      <button
+        type="button"
+        id="boton-cafe"
+        aria-label="Café secreto"
+        title="Café secreto"
+      >
+        ☕
+      </button>
+    </footer>
+
+    <div id="mostrador" class="mostrador oculto">
+      <div class="escena-aroma">
+        <div class="contenedor-aroma">
+          <span class="aroma a-1"></span>
+          <span class="aroma a-2"></span>
+          <span class="aroma a-3"></span>
+        </div>
+
+        <div class="contenedor-taza">
+          <div class="tapa-de-taza"></div>
+          <div class="cuerpo-de-taza"></div>
+        </div>
+
+        <p class="mensaje-aroma">
+          Vale por un café, ¡Suerte con estática 🌱! ☕✨
+        </p>
+      </div>
+    </div>
     <script src="/javascript/app.js"></script>
   </body>
 </html>

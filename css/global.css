@@ -176,6 +176,16 @@ progress::-moz-progress-bar {
   border-radius: 999px;
 }
 
+/* Selecciona cualquier header que contenga la clase .filtro */
+header.filtro {
+  background-color: transparent; /* O var(--color-superficie) según tu diseño */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
 /* Botones Base */
 .btn {
   padding: 0.65rem 1.25rem;
@@ -348,6 +358,53 @@ footer {
   padding: 1rem;
   font-size: 0.85rem;
 }
+
+footer.pie-sitio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.pie-sitio a {
+  color: var(--color-superficie);
+  text-decoration: none;
+}
+
+.pie-sitio a:hover {
+  text-decoration: underline;
+}
+
+.pie-sitio button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.pie-sitio button:focus-visible {
+  outline: 2px solid var(--color-superficie);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pie-sitio button:hover {
+    animation: vibrar-cafe 0.3s ease-in-out infinite;
+  }
+
+  @keyframes vibrar-cafe {
+    0%,
+    100% {
+      transform: rotate(-5deg) translateX(-1px);
+    }
+    50% {
+      transform: rotate(5deg) translateX(1px);
+    }
+  }
+}
+
 .error {
   color: #b91c1c;
   font-weight: 600;
@@ -360,4 +417,143 @@ footer {
   form {
     grid-template-columns: 1fr;
   }
+}
+
+/* --- OVERLAY A PANTALLA COMPLETA --- */
+.mostrador {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 13, 9, 0.94);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  backdrop-filter: blur(8px);
+}
+
+.mostrador.oculto {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --- ESCENA DEL CAFÉ --- */
+.escena-aroma {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* Taza y Tapa */
+.contenedor-taza {
+  position: relative;
+  width: 120px;
+  height: 130px;
+  margin-top: 50px;
+}
+
+.cuerpo-de-taza {
+  width: 100%;
+  height: 100px;
+  background: #d4a373;
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+  position: absolute;
+  bottom: 0;
+  box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.15);
+}
+
+.tapa-de-taza {
+  width: 130px;
+  height: 28px;
+  background: #bc4749;
+  border-radius: 8px 8px 4px 4px;
+  position: absolute;
+  top: 10px;
+  left: -5px;
+  z-index: 2;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Animación de destapar */
+.mostrador:not(.oculto) .tapa-de-taza {
+  animation: destapar 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.2s;
+}
+
+@keyframes destapar {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-80px) rotate(-25deg);
+  }
+  100% {
+    transform: translateY(-140px) translateX(80px) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+/* --- HUMO / AROMA --- */
+.contenedor-aroma {
+  position: absolute;
+  top: 10px;
+  display: flex;
+  gap: 16px;
+  z-index: 1;
+}
+
+.aroma {
+  width: 10px;
+  height: 70px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.8), transparent);
+  border-radius: 10px;
+  filter: blur(5px);
+  opacity: 0;
+}
+
+.mostrador:not(.oculto) .aroma {
+  animation: elevar-aroma 2.5s infinite ease-in-out;
+}
+
+.a-1 {
+  animation-delay: 1s;
+}
+.a-2 {
+  animation-delay: 1.4s;
+}
+.a-3 {
+  animation-delay: 1.8s;
+}
+
+@keyframes elevar-aroma {
+  0% {
+    transform: translateY(20px) scaleX(1);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-50px) scaleX(2) rotate(10deg);
+  }
+  100% {
+    transform: translateY(-110px) scaleX(3) rotate(-10deg);
+    opacity: 0;
+  }
+}
+
+/* Texto Informativo */
+.mensaje-aroma {
+  color: #fefae0;
+  font-size: 1.25rem;
+  margin-top: 30px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.5s ease;
+}
+
+.mostrador:not(.oculto) .mensaje-aroma {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.8s;
 }

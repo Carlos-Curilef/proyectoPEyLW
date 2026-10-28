@@ -1,7 +1,3 @@
-// ==========================================
-// 1. CAPA DE PERSISTENCIA
-// ==========================================
-
 class Almacenamiento {
   static set(clave, valor) {
     localStorage.setItem(clave, JSON.stringify(valor));
@@ -20,10 +16,6 @@ class Almacenamiento {
     localStorage.clear();
   }
 }
-
-// ==========================================
-// 2. CAPA DE NEGOCIO Y MODELOS
-// ==========================================
 
 class Ingreso {
   static guardarIngreso(monto, categoria, fecha, frecuencia, descripcion) {
@@ -168,10 +160,6 @@ class ReporteServicio {
   }
 }
 
-// ==========================================
-// 3. FUNCIONES AUXILIARES Y DE FILTRADO
-// ==========================================
-
 const validadores = {
   montoPositivo: (valor) => Number.isFinite(Number(valor)) && Number(valor) > 0,
   numeroNoNegativo: (valor) =>
@@ -266,12 +254,13 @@ const reglasGasto = {
     ]),
     mensaje: "Seleccioná una categoría válida.",
   },
-  fecha: {
-    validar: validadores.fecha,
-    mensaje: "Ingresá una fecha válida.",
-    validar: validadores.fechaAnterior,
-    mensaje: "Ingresá una fecha anterior o actual.",
-  },
+  fecha: [
+    { validar: validadores.fecha, mensaje: "Ingresá una fecha válida." },
+    {
+      validar: validadores.fechaAnterior,
+      mensaje: "Ingresá una fecha anterior o actual.",
+    },
+  ],
   metodoPago: {
     validar: validadores.unoDe([
       "debito",
@@ -402,10 +391,6 @@ function filtrarDistribucion(periodo) {
   });
 }
 
-// ==========================================
-// 4. CAPA DE VISTA / RENDERIZADO
-// ==========================================
-
 function renderizarDashboard(datos) {
   const fechaActual = document.getElementById("fecha");
   if (fechaActual) fechaActual.textContent = establecerFechaActual();
@@ -504,10 +489,6 @@ function renderizarReportes(resumen) {
     listaDesglose.appendChild(li);
   });
 }
-
-// ==========================================
-// 5. CAPA DE CONTROLADORES Y EVENTOS
-// ==========================================
 
 function iniciarModuloDashboard() {
   const datosIniciales = DashboardServicio.obtenerDatosDashboard();
@@ -694,10 +675,6 @@ function iniciarModuloReportes() {
   }
 }
 
-// ==========================================
-// 6. ENRUTADOR GLOBAL
-// ==========================================
-
 function iniciarApp() {
   const paginaActiva = document.querySelector("a.activo");
   if (!paginaActiva) {
@@ -732,3 +709,37 @@ function iniciarApp() {
 }
 
 document.addEventListener("DOMContentLoaded", iniciarApp);
+
+const botonCafe = document.getElementById("boton-cafe");
+const mostrador = document.getElementById("mostrador");
+
+if (botonCafe && mostrador) {
+  let cantidadDeClicks = 0;
+  let tiempoDeClick = null;
+
+  const CLICS_REQUERIDOS = 5;
+  const TIEMPO_MAXIMO_REQUERIDO = 1500;
+  const DURACION_ANIMACION = 7000;
+
+  botonCafe.addEventListener("click", () => {
+    cantidadDeClicks++;
+
+    clearTimeout(tiempoDeClick);
+    tiempoDeClick = setTimeout(() => {
+      cantidadDeClicks = 0;
+    }, TIEMPO_MAXIMO_REQUERIDO);
+
+    if (cantidadDeClicks >= CLICS_REQUERIDOS) {
+      cantidadDeClicks = 0;
+      activarAnimacionCafe();
+    }
+  });
+
+  function activarAnimacionCafe() {
+    mostrador.classList.remove("oculto");
+
+    setTimeout(() => {
+      mostrador.classList.add("oculto");
+    }, DURACION_ANIMACION);
+  }
+}
